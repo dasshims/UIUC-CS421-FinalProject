@@ -1,0 +1,21 @@
+080215: PJ
+
+  Updated to uniplate-1.1 (to make it compile with my ghc-version)
+
+  darcs get --to-match 'name ".*compile with GHC 6.8.1.*"' --partial http://www.cs.york.ac.uk/fp/darcs/uniplate/
+  cd uniplate
+  runhaskell Setup.hs configure
+  runhaskell Setup.hs build
+  sudo runhaskell Setup.hs install
+
+  sudo ghc-pkg unregister uniplate-1.0.1
+  ghc-pkg list | grep uniplate-1.1
+
+  -- OK, works. Now trying with direct source code
+  sudo ghc-pkg unregister uniplate
+  cp -r uniplate/Data .
+  -- OK, also works.
+
+080402: PJ
+
+  Downloaded and installed uniplate-1.0.1 from hackage.

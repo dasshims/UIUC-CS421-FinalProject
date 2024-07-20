@@ -1,0 +1,913 @@
+[Added README
+Manuel M T Chakravarty <chak@cse.unsw.edu.au>**20061009143916] 
+[Added LIGD and LIGD.examples
+Manuel M T Chakravarty <chak@cse.unsw.edu.au>**20061009184712
+ - LIGD is the code contributed by James Cheney
+ - LIOGD.examples has been posted to the list by Johan Jeuring
+] 
+[Alternative implementation for SYB3.
+oleg@okmij.org**20061025030117] 
+[SYB1&2 tests
+sweirich@cis.upenn.edu**20061026184829] 
+[LIGD tests
+sweirich@cis.upenn.edu**20061109154453] 
+[Comparison suite for generic libraries
+Alexey Rodriguez <alexey@cs.uu.nl>**20070208132717] 
+[More files needed for the comparison
+Alexey Rodriguez <alexey@cs.uu.nl>**20070208133144] 
+[README fiel
+Alexey Rodriguez <alexey@cs.uu.nl>**20070208144115] 
+[Equality tests for different constructors being compared
+Alex Gerdes <alex@gefion.nl>**20070212123335] 
+[Expected result for equality
+Alexey Rodriguez <alexey@cs.uu.nl>**20070212125322] 
+[SYB should not print parenthesis around nullary constructors, and generated of .exp with LIGD.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070219103252] 
+[FoldTree test
+Alexey Rodriguez <alexey@cs.uu.nl>**20070219103440] 
+[Added Reduce test for LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20070222164239] 
+[Previously I forgot to add this datatype for the foldTree test.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070222164307] 
+[Generic reduce is now even more generic now.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070301140828] 
+[Layout LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20070301141652] 
+[Expected for generic reduce
+Alexey Rodriguez <alexey@cs.uu.nl>**20070301142115] 
+[Generic map test
+Alexey Rodriguez <alexey@cs.uu.nl>**20070302113358] 
+[Renamed identifiers *Tree* -> *BinTree*
+Alexey Rodriguez <alexey@cs.uu.nl>**20070308130257] 
+[Equality on generalised rose trees
+Alexey Rodriguez <alexey@cs.uu.nl>**20070312093147] 
+[Added reduce test for SYB
+Alexey Rodriguez <alexey@cs.uu.nl>**20070312131712] 
+[SYB cannot handle higher kinds
+patrikj@chalmers.se**20070314104721] 
+[Removed trailing whitespace
+patrikj@chalmers.se**20070314104835] 
+[SYB does not support higher kinded types
+patrikj@chalmers.se**20070314104949] 
+[Added trivial Makefile
+patrikj@chalmers.se**20070314105045] 
+[Changing definitions using Rep1 to use of Rep2, less repetition like this.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322134949] 
+[Remove Rep1 from LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322135659] 
+[Added Data and Typable instances for GRose
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322141053] 
+[Moved instances of GRose to a separate module.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322151547] 
+[Added GM and GL
+agerdes@mac.com**20070402131851] 
+[Initial RepLib checkin
+agerdes@mac.com**20070430222858] 
+[SYB Spine view, first version
+Alexey Rodriguez <alexey@cs.uu.nl>**20070507120611
+ 
+ The gshow expected result is too pesimistic. The Spine gshow does much
+ better, we should update all the other approaches (when possible).
+ 
+ Still to complete : map and reduce examples.
+ 
+] 
+[Missing tests give shorter errors.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070514162324] 
+[Alex's final RepLib code, still some warnings to fix
+Alexey Rodriguez <alexey@cs.uu.nl>**20070515100300] 
+[adding Smash
+oleg@okmij.org**20070526092159] 
+[add GShow and Paradize benchmarks
+oleg@okmij.org**20070529075749] 
+[test - library choice
+agerdes@mac.com**20070530081054
+ 
+ Added the possibility to specify which libraries should be tested. If no
+ argument is given all libraries are tested, just as before. If you want
+ to run a single or couple of libs, just give the name as an argument. For
+ example:
+ 
+ runghc test.hs GM Smash
+ 
+] 
+[Smash the rest of your boilerplate.
+oleg@okmij.org**20070531013323] 
+[Added three tests: GShow, FoldTree, Paradize for SmashA.
+oleg@okmij.org**20070531024419] 
+[The reduce functions for SYB are more honest: no more explicit pattern matching.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070530164235] 
+[grose equality not implemented in GL
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531152652] 
+[Reduce tests local redefinitions better.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531152805
+ 
+ Previously, collect would gather all the |Int| values
+ of a |BinTree Int|. But this could also collect |Int| values
+ other than the Tree payload, i.e. weights, balancing info.
+ 
+ So this test now uses a value of type |Tree a b| where the first
+ argument is the element type and the second the weight type. The test
+ requires that collect only gathers |a| values, excluding any content
+ such as the weights even if |a=b| like in |Tree Int Int|
+ 
+ LIGD, GL and GM have been updated. The rest must be done still.
+ 
+] 
+[More grose error messages
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531154430] 
+[SYB1_2 implements the new Reduce test, but fails because of inherent limitations.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531155719] 
+[Spine fails nicely on Reduce
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531161300] 
+[Matching the behavior of Haskell's show.
+oleg@okmij.org**20070601001338] 
+[generic equality is implementable in SmashA. Added Geq test.
+oleg@okmij.org**20070602092426] 
+[Added GMap. Generic map is indeed only one line, for any traversable data type.
+oleg@okmij.org**20070602095745] 
+[Added reduce test.
+oleg@okmij.org**20070602103017] 
+[More comments and examples.
+oleg@okmij.org**20070605010835] 
+[GAPP makes instance derivation automatic. The LDat instance becomes a simple function of the datatype definition.
+oleg@okmij.org**20070605025716] 
+[Generic minimum/maximum.
+oleg@okmij.org**20070605070503] 
+[New test: can a generic function be extended in another module?
+Alexey Rodriguez <alexey@cs.uu.nl>**20070607160501
+ 
+ The new test requires to extend generic equality in another module,
+ take a look at TestGEqTree.lhs and GL/GEqTree.lhs for details.
+ 
+] 
+[Updated to the latest version of GL, code due to Bruno
+Alexey Rodriguez <alexey@cs.uu.nl>**20070607163841] 
+[Corrected reduce function for RepLib
+agerdes@mac.com**20070605224944] 
+[Initial Generic Programming, Now! checkin and removed unnecessary files.
+agerdes@mac.com**20070607221426] 
+[Added test with a nested datatype
+agerdes@mac.com**20070612134400] 
+[Added conparison/PolyP
+patrikj@chalmers.se**20070613110748] 
+[Added comparison/PolyP/PolyLib
+patrikj@chalmers.se**20070613110904] 
+[GL GRose equality
+agerdes@mac.com**20070613115053] 
+[Trimming whitespace (no semantic change)
+patrikj@chalmers.se**20070613151326] 
+[Added PolyP/GEqTree.hs (failing because PolyP cannot extend a polytypic function in this way)
+patrikj@chalmers.se**20070613151357] 
+[Cleaned up whitespace + added flags to PolyP example
+patrikj@chalmers.se**20070613173810] 
+[Added the rest of the PolyP test cases (most failing)
+patrikj@chalmers.se**20070613174113] 
+[LIGD: trimmed spaces + aligned + fixed comments + small rename
+patrikj@chalmers.se**20070615164232] 
+[LIGD/Nested (working) and LIGD/GEqTree (failing) added
+patrikj@chalmers.se**20070615174012] 
+[Completed LIGD/GEqTree with an implementation that works (by representing weighted trees by stripping the weight).
+patrikj@chalmers.se**20070615190916] 
+[Renamed Tree to WTree (same as paper)
+patrikj@chalmers.se**20070616093542] 
+[renamed GM to GMsec3 + cleaning
+patrikj@chalmers.se**20070616131909] 
+[Just cleaning.
+patrikj@chalmers.se**20070616132054] 
+[renamed GL to EMGM + unified the lib order in test.hs and the table in the paper
+patrikj@chalmers.se**20070616133324] 
+[Cleaning up NOW (resolved ghc warnings + whitespace).
+patrikj@chalmers.se**20070616135528] 
+[Replaced OPTIONS with OPTIONS_GHC (all are GHC-specific)
+patrikj@chalmers.se**20070617092550] 
+[Cleaning up trailing whitespace
+patrikj@chalmers.se**20070617092945] 
+[EMGM: corrected and completed ...Reps files
+patrikj@chalmers.se**20070617093223] 
+[Added simple test of efficiency (to LIGD, Spine, EMGM so far)
+patrikj@chalmers.se**20070617093540] 
+[Minor alignment fixes in Spine/GEq
+patrikj@chalmers.se**20070617093827] 
+[Added log.txt with an overview of test impl. status
+patrikj@chalmers.se**20070617101743] 
+[added SYB1_2/Efficiency (slowest so far)
+patrikj@chalmers.se**20070617105325] 
+[RepLib whitespace cleanup
+patrikj@chalmers.se**20070617113302] 
+[Added RepLib/Efficiency (fastest so far)
+patrikj@chalmers.se**20070617113620] 
+[Added time target to main Makefile
+patrikj@chalmers.se**20070617124343] 
+[NOW reduce function + Paradis fix
+agerdes@mac.com**20070616190005] 
+[Trivial changes to resolve conflict when applying Alex patch in NOW/
+patrikj@chalmers.se**20070617124900] 
+[Two more fixes related to the previous NOW patch
+patrikj@chalmers.se**20070617130337] 
+[Added PolyP/Efficiency (second best)
+patrikj@chalmers.se**20070617132341] 
+[Resolved conflict in NOW
+agerdes@mac.com**20070618073710] 
+[Another conflict resolve patch
+agerdes@mac.com**20070618091607] 
+[Add Uniplate examples to the suite
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070618000557] 
+[Added Uniplate lib and fixed reduce extensions import
+agerdes@mac.com**20070618095957] 
+[Derive Data/Typeable for Perfect
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070618000359] 
+[Fix up the Uniplate Reduce benchmark to meet the specificatino
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070618001248] 
+[Remove -fglasgow-exts for Uniplate's Reduce, instead of an explicit type signature use asTypeOf
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070619003722] 
+[Nested data types for Smash. Less easy, but possible -- and even a bit insightful.
+oleg@okmij.org**20070619105335
+ Nested data types with Smash is a bit less obvious: polymorphic recursion
+ in the presence of constraints doesn't quite work. Smash is more general
+ than is required for this task. The solution is nevertheless possible and
+ short. It also illustrates how to pass generic functions as arguments
+ without any need for higher-rank types. So, Smash's generic functions
+ are first-class, and have always been. It just goes to show to
+ higher-rank is already present in Haskell98.
+] 
+[Missing NOW files added, added NOW to time Makefile
+agerdes@mac.com**20070620134224] 
+[Added NOW Efficiency file
+agerdes@mac.com**20070620090349] 
+[Finished NOW, all functions pass the test and including the efficiency test
+agerdes@mac.com**20070620004354] 
+[Renamed equalTree to equalWTree
+patrikj@chalmers.se**20070617093734] 
+[Split TestFoldTree to test traversing of a term independently from ad-hoc defs. . Also removed TestEfficiency from test
+Alexey Rodriguez <alexey@cs.uu.nl>**20070621141256] 
+[Made test driver more user friendly
+Alexey Rodriguez <alexey@cs.uu.nl>**20070621141450] 
+[added GRose type rep for EMGM
+agerdes@mac.com**20070621111517] 
+[Added nested grose trees
+Alexey Rodriguez <alexey@cs.uu.nl>**20070621152732] 
+[Cannot give instances for NGRose
+Alexey Rodriguez <alexey@cs.uu.nl>**20070621153340] 
+[README
+Alexey Rodriguez <alexey@cs.uu.nl>**20070621153616] 
+[Uniplate was missing from the list of approaches to test
+Alexey Rodriguez <alexey@cs.uu.nl>**20070621161359] 
+[Added time measurement top-level file (forgot it earlier).
+patrikj@cs.chalmers.se**20070623140918] 
+[Added Monadic reconstruction; example of a simple deserialization.
+oleg@okmij.org**20070627082245] 
+[Added GADTs to test suite
+agerdes@mac.com**20070807113406] 
+[Test for higher-order generic functions, see TestHigherOrder.hs for more info.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070807121641] 
+[Better reporting of test failures
+Alexey Rodriguez <alexey@cs.uu.nl>**20070807134055] 
+[Added (non-working) higher-order gen. funs. test to EMGM
+Alexey Rodriguez <alexey@cs.uu.nl>**20070808142135] 
+[Higher order gmapQ for EMGM
+Alexey Rodriguez <alexey@cs.uu.nl>**20070813144519] 
+[Small renaming
+Alexey Rodriguez <alexey@cs.uu.nl>**20070813153016] 
+[Split up Higher order test and added SYB cases.
+Alexey Rodriguez <alexey@cs.uu.nl>**20071022152531
+ 
+ The Higher Orderness test is split into two tests.
+ Test 1 does not need ad-hoc cases but Test 2 does, check sources.
+ 
+ Also added SYB instances of the test.
+ 
+] 
+[Give a warning for unknown options in test.hs
+Alexey Rodriguez <alexey@cs.uu.nl>**20071024103624] 
+[Convenient Makefile target for ghci testing of approaches
+Alexey Rodriguez <alexey@cs.uu.nl>**20071024103655] 
+[Added missing BinTreeReps2, GMap2 and other tests were failing for EMGM otherwise.
+Alexey Rodriguez <alexey@cs.uu.nl>**20071025120514] 
+[Changed higher order tests and GShow test, ad-hoc list case for gshow is not required anymore. Ad-hoc-ness is tested in foldtree and paradise already.
+Alexey Rodriguez <alexey@cs.uu.nl>**20071025124327] 
+[Spine GShow conforms to the expected result in benchmark
+Alexey Rodriguez <alexey@cs.uu.nl>**20071025130734
+ 
+ The implementation of generic show in this library was more advanced than in
+ other libraries. Nothing fundamental, but it is to tiresome to make as good a
+ show in all libraries. In short we went for the lowest common denominator.
+ 
+ The things that were changed were:
+ 
+  * Removed ad-hoc cases for lists and strings.
+  * Constructors were renamed (Cons -> (:) , Nil -> [])
+  * Now we always print a parenthesis around the result (hacky since Spine uses priorities of infix constructors
+    while other libs don't, so data with infix cons. might break this again).
+ 
+] 
+[Higher order tests for Spine
+Alexey Rodriguez <alexey@cs.uu.nl>**20071025161526] 
+[Added DTCs
+agerdes@mac.com**20071106094506] 
+[Added GLookup test
+agerdes@mac.com**20071106121833
+ 
+ Added implementations for EMGM, Spine and SYB1_2
+ 
+] 
+[Added producer test
+agerdes@mac.com**20071106132146
+ 
+ A fulltree test function is added to EMGM, in order to generate (produce) a value that is used in the efficiency test.
+ 
+] 
+[Efficiency test (from sept 2007) with -O2
+patrikj@chalmers.se**20071114081329] 
+[Started classifying the approaches (unfinished comments)
+patrikj@chalmers.se**20071114081435] 
+[Made efficiency check up to date with ghc 6.8.1
+patrikj@chalmers.se**20071114091026] 
+[Yet another generic transpose (and generalised matrix multiplication). Not yet part of suite.
+Alexey Rodriguez <alexey@cs.uu.nl>**20071218150625] 
+[Test output (.out & .compilestats) are generated in out dir
+Alexey Rodriguez <alexey@cs.uu.nl>**20080107101524] 
+[Disabling NOW
+Alexey Rodriguez <alexey@cs.uu.nl>**20080107101751
+ 
+  * I think that the approach in Generic programming NOW is already being tested by Spine.
+  * If after a careful reading of the paper it is not the case, I might enable NOW again.
+  * Note that in this evaluation we do not assume extensible functions and datatypes.
+ 
+] 
+[Runtime errors are reported differently in GHC 6.8.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080107141638
+ 
+ Namely:
+ 
+ * error prints its argument to stderr in place of stdout.
+ * the formatting changed, "*** Error" is gone.
+ 
+] 
+[Added TestGEqBTree
+Alexey Rodriguez <alexey@cs.uu.nl>**20080108174004
+ 
+ Equality tests two things:
+ 
+  * Separate compilation.
+  * Multiple arguments (equality has two).
+ 
+ However the test is done on Company which fails
+ for Polyp. That is why we do the test here on BinTree.
+ See it as a form of a lowest common denominator.
+ 
+] 
+[Removed export list from Spine/GEq.lhs
+Alexey Rodriguez <alexey@cs.uu.nl>**20080108174905] 
+[Rearranged README
+Alexey Rodriguez <alexey@cs.uu.nl>**20080108174954] 
+[TestSelectSalary
+Alexey Rodriguez <alexey@cs.uu.nl>**20080108190133] 
+[More honest results for higher order funs. + ad hoc cases
+Alexey Rodriguez <alexey@cs.uu.nl>**20080110100102] 
+[Test for higher-order functions: it does not work for RepLib.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080110100728] 
+[TestUpdateSalary
+Alexey Rodriguez <alexey@cs.uu.nl>**20080110103101] 
+[UpdateSalary
+Alexey Rodriguez <alexey@cs.uu.nl>**20080110151112] 
+[Extensible gshow test, only implemented for EMGM for now, next in line ... RepLib
+Alexey Rodriguez <alexey@cs.uu.nl>**20080115150501] 
+[More info in GShow tests
+Alexey Rodriguez <alexey@cs.uu.nl>**20080115151302] 
+[Halfway to extended gshow for RepLib
+Alexey Rodriguez <alexey@cs.uu.nl>**20080115174051] 
+[Oops, forgot to commit utility functions.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080115174132] 
+[Switched gshow to parametrized representation to allow extension with a case for lists
+Alexey Rodriguez <alexey@cs.uu.nl>**20080115175850] 
+[formatting in test.hs
+Alexey Rodriguez <alexey@cs.uu.nl>**20080118132054] 
+[Test constructor cases
+Alexey Rodriguez <alexey@cs.uu.nl>**20080118163906] 
+[Description for constructor cases
+Alexey Rodriguez <alexey@cs.uu.nl>**20080118164633
+ 
+ Constructor cases
+ -----------------
+ 
+ This is for testing constructor cases, that is, can you write
+ an ad-hoc case to handle one constructor and then let the rest
+ be handled/traversed generically?
+ 
+ Why is this useful?
+ Suppose you want to rewrite "x+0" to "x" in a big AST, you do not
+ want to program the traversal of other constructors, right?
+ 
+ Well, this removes "WithWeight" constructors handling the others
+ generically.
+ 
+ 
+ 
+] 
+[small cleanups
+Alexey Rodriguez <alexey@cs.uu.nl>**20080118170506] 
+[Moved representations out of RepLib/GMap.lhs into R2 and BinTreeReps
+Alexey Rodriguez <alexey@cs.uu.nl>**20080121125500] 
+[Constructor case for SYB1_2
+Alexey Rodriguez <alexey@cs.uu.nl>**20080121135157] 
+[Csontructor case for RepLib using RepLib SYB machinery
+Alexey Rodriguez <alexey@cs.uu.nl>**20080121143249] 
+[RepLib does not support GRose & NGRose
+Alexey Rodriguez <alexey@cs.uu.nl>**20080201134243] 
+[NGRose is not representable in EMGM either.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080201143928] 
+[Simplified NGRose test a bit, but it is still as demanding to implement
+Alexey Rodriguez <alexey@cs.uu.nl>**20080201153520] 
+[Minor edits - mainly comments summarising the tests
+patrikj@chalmers.se**20080204103448] 
+[Print more test info, minor renaming towards paper usage, test overview.
+patrikj@chalmers.se**20080204112026] 
+[NGRoseReps added and made NGRose to work under EMGM
+Alexey Rodriguez <alexey@cs.uu.nl>**20080204151210] 
+[Some renaming to match paper + added some comments
+patrikj@chalmers.se**20080204180039] 
+[listifyInt -> selectInt
+patrikj@chalmers.se**20080204192513] 
+[listify -> select in most places
+patrikj@chalmers.se**20080204200730] 
+[Removed repeated printing of library name in test reports
+Alexey Rodriguez <alexey@cs.uu.nl>**20080205141532] 
+[Added a generic generate (gfulltree) function for LIGD
+alex@cs.uu.nl**20080206122329] 
+[Some polishing
+patrikj@chalmers.se**20080211115718] 
+[Only comments
+patrikj@chalmers.se**20080211124756] 
+[Reduce -> CrushRight, big patch
+Alexey Rodriguez <alexey@cs.uu.nl>**20080211203859
+ 
+ * Changed names from Reduce -> CrushRight
+ * Updated LIGD + representation + massive cleanup of CrushRight
+ * Updated EMGM + massive cleanup of CrushRight
+ * Changed back reporting of results in test.hs
+ 
+] 
+[GShow[Ext] for EMGM: polishing
+patrikj@chalmers.se**20080211130653] 
+[GShow[Ext] for LIGD implemented (when possible)
+patrikj@chalmers.se**20080211134033] 
+[GShow[ext] RepLib updates (minimal imports, etc.) + simplification of same test for EMGM
+patrikj@chalmers.se**20080211142644] 
+[GShow[Ext] PolyP (trivially failing cases added)
+patrikj@chalmers.se**20080211143235] 
+[GShow[Ext] Spine: removed cheating in GShow, added (failing) GShowExt
+patrikj@chalmers.se**20080211144430] 
+[GShow SYB1_2 fixes
+patrikj@chalmers.se**20080211145821] 
+[GShowExt SYB1_2 added (working)
+patrikj@chalmers.se**20080211201910] 
+[SYB1_2 fails for CrushRight.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080211210102] 
+[Simplification of representation of arity two
+Alexey Rodriguez <alexey@cs.uu.nl>**20080212112504
+ 
+ Previously the arity two representation was
+ |data Rep2 f a b c d = ...| where |c| and |c|
+ represented the non-generic variables (for
+ example for the two variables used in crushRight:
+ |Rep2 CrushRight a b c d| and
+ |newtype CrushRight  c b a x = CrushRight { crushRight :: (c -> b -> b) -> b -> a -> b }
+ ).
+ It turns out that |Rep2| does not need the additional c and d,
+ we do the same thing that the EMGM version of the test was doing:
+ > data Rep2 f a b = ...
+ > newtype CrushRight c b a x = CrushRight { crushRight :: (c -> b -> b) -> b -> a -> b }
+ so it is represented as |Rep2 (CrushRight c d) a b|.
+ 
+] 
+[Further simplifications in CrushRight for LIGD and EMGM, as per RepLib paper section 5
+Alexey Rodriguez <alexey@cs.uu.nl>**20080212174549] 
+[CrushRight working for RepLib, not very satisfactory though.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080212185631
+ 
+ * crushRight is instantiated to perform operations on the
+   |a| elements of |WTree a w|. So the type class approach from the
+   paper does not work very well. It would mean a different
+   typeclass per kind. The same would happen if you would want
+   to obtain | (a->b) -> WTree a w -> WTree b w |.
+ * Okay, so let's forget about type classes right? This is still
+   painful. Let us see the problems:
+   * The representation of lists, for example, is something like
+     |R f [a]|, but in order to construct it, the function |rList1|
+     needs a function |f a| and another |f [a]|. The former is sort
+     of okay, you need to know how to process elements. The second
+     is tricky, but needed in RepLib: it is used for extension.
+     Normally you use typeclasses to simplify building the second.
+     So now instantiating crushRight has become quite more difficult
+     than in other approaches.
+   * The second problem has to do with a more complex type expression,
+     like [WTree a w], that is, a list of WTree's. Now, if you want
+     to build a list rep, you must a pass a function that works on
+     WTree's. This means that the representation of WTree's which builds
+     a representation for them, must be converted to a function that only
+     then can be passed to rList1, the builder of list representations.
+     You can see that in function r2crsh. Needless to say this makes things
+     more complicated than in other approaches.
+ 
+ Solutions wanted!
+ 
+] 
+[Small edit on RepLib's crushRight
+Alexey Rodriguez <alexey@cs.uu.nl>**20080212190931] 
+[Universe extension tests and separate compilation test
+Alexey Rodriguez <alexey@cs.uu.nl>**20080213125418
+ 
+ * Universe extension to datatype T is called TestGEqT.
+ * The separate compilation test is called TestGEq.
+   It is tested on the BinTree datatype, so it is assumed
+   to be supported (i.e. universe extension to it is possible)
+   by all approches.
+ * Maybe it would be good to add a universe extension test for
+   BinTree anyway. At the moment it is missing.
+ 
+] 
+[TestHigherOrder -> TestGMapQ1
+Alexey Rodriguez <alexey@cs.uu.nl>**20080213130832] 
+[GShow[Ext] Smash: added tests. They fail.
+patrikj@chalmers.se**20080213120810] 
+[GShow[Ext] Uniplate added (failing)
+patrikj@chalmers.se**20080213122954] 
+[FoldTree updated over all approaches
+patrikj@chalmers.se**20080213150304] 
+[Forgotten file last check-in
+patrikj@chalmers.se**20080213150431] 
+[Fixed Uniplate with ghc 6.8 (by merging patches from uniplate repo.)
+patrikj@chalmers.se**20080215091009] 
+[Uniplate Nested loops for me => disabled test (needs investigation)
+patrikj@chalmers.se**20080215091136] 
+[Just documentation
+patrikj@chalmers.se**20080215091223] 
+[GMap LIGD recoded
+patrikj@chalmers.se**20080215101202] 
+[GMap for EMGM updated
+patrikj@chalmers.se**20080215102404] 
+[GMap PolyP minor updates
+patrikj@chalmers.se**20080215102711] 
+[GMap Spine done (failing test)
+patrikj@chalmers.se**20080215104359] 
+[GMap SYB1_2 clarified that gmap cannot be defined
+patrikj@chalmers.se**20080215105015] 
+[GMap RepLib: only comment (comp.error. Alex working on it, I guess)
+patrikj@chalmers.se**20080215105543] 
+[GMap Smash: not supported
+patrikj@chalmers.se**20080215110643] 
+[GMap Uniplate added (failing) + forgotten line in Smash addition
+patrikj@chalmers.se**20080215111134] 
+[Removed SYB_w_cl from test.hs (the library does not exist in this repository)
+patrikj@chalmers.se**20080215111453] 
+[Add rmWeights to Uniplate
+Neil Mitchell**20080215152450] 
+[make gshowExt for SYB1_2 (see SYB1_2/GShowExt.lhs for explanation)
+Alexey Rodriguez <alexey@cs.uu.nl>**20080220112336] 
+[RmWeights implementation for Spine.
+alex@cs.uu.nl**20080220204634] 
+[Allowing cheating for LIGD and Spine in ad-hoc cases for constructors
+Alexey Rodriguez <alexey@cs.uu.nl>**20080221125245] 
+[Nested Uniplate: works again (I had some strange mix of half-updated uniplate versions installed)
+patrikj@chalmers.se**20080216120332] 
+[UpdateSalary EMGM updated
+patrikj@chalmers.se**20080216122349] 
+[UpdateSalary LIGD updated
+patrikj@chalmers.se**20080216124543] 
+[UpdateSalary SYB1_2 updated
+patrikj@chalmers.se**20080216125108] 
+[UpdateSalary RepLib updated
+patrikj@chalmers.se**20080216155300] 
+[UpdateSalary Uniplate update
+patrikj@chalmers.se**20080216155520] 
+[UpdateSalary Spine update (failing as it should)
+patrikj@chalmers.se**20080216160654] 
+[UpdateSalary PolyP updated (failing as it should)
+patrikj@chalmers.se**20080216160951] 
+[UpdateSalary Smash updated
+patrikj@chalmers.se**20080216162621] 
+[UpdateSalary check completed
+patrikj@chalmers.se**20080216162804] 
+[RmWeights EMGM updated (builds on Gid, not updateSalary)
+patrikj@chalmers.se**20080216172120] 
+[RmWeights SYB1_2 updated
+patrikj@chalmers.se**20080216172650] 
+[RmWeights RepLib fixes
+patrikj@chalmers.se**20080216175352] 
+[RmWeights Uniplate updates (general def. still missing)
+patrikj@chalmers.se**20080216175437] 
+[fulltree added to PolyP
+patrikj@chalmers.se**20080221144625] 
+[GMap for Spine
+alex@cs.uu.nl**20080212223542] 
+[GMap for Spine (cheating separate compilation)
+alex@cs.uu.nl**20080221225703] 
+[TestRmWeights for Spine, the previous test was broken (explicit matching of constructors other than WithWeight not allowed)
+Alexey Rodriguez <alexey@cs.uu.nl>**20080225111645] 
+[Added a transformation map to LIGD (gmapT), will be useful for a test at least.
+Alexey Rodriguez <alexey@cs.uu.nl>**20080225121915] 
+[RmWeights for LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20080225133509] 
+[Data and Typeable instances are generated using standalone 'deriving', specific to GHC >= 6.8.
+Alexey Rodriguez <mrchebas@gmail.com>**20080303135042] 
+[Added "import CompanyReps" to SYB1_2 tests.
+Alexey Rodriguez <mrchebas@gmail.com>**20080303135655] 
+[SYB1_2/GRoseInstances.hs -> SYB1_2/GRoseReps.hs
+Alexey Rodriguez <mrchebas@gmail.com>**20080303135910] 
+[Factored out paren from SYB1_2/GShow.lhs
+Alexey Rodriguez <mrchebas@gmail.com>**20080303151149] 
+[TestGShow and TestGShowExt for SYB with class
+Alexey Rodriguez <mrchebas@gmail.com>**20080303151226] 
+[Added pointer to the version of SYB with class that we are using (HAppS's version, check README)
+Alexey Rodriguez <mrchebas@gmail.com>**20080303151557] 
+[Spine nearly complete, only Crush is unimplemented. Changed Nested test to use equality instead of collect.
+alex@cs.uu.nl**20080305130949] 
+[Nested test for most libraries (EMGM, LIGD, RepLib, SYB)
+alex@cs.uu.nl**20080305214529] 
+[Renamed the selectInt test to selectIntWTree and added a selectIntPerfect to test if a library is able to handle nested datatypes.
+alex@cs.uu.nl**20080310105517] 
+[a better emulation of typeclasses with stapply: resolution failure gives the answer ResFailure, which will trigger a type error whenever it is used for anything.
+oleg@okmij.org**20070730005141] 
+[Made all the old test of SmashA work in the new version of the framework.
+oleg@okmij.org**20080311092029
+ The changes mainly involved removing the SmashA qualifier from the module
+ names.
+ The tests that pass now: TestUpdateSalary, TestGMap, TestCrushRight,
+ TestSelectSalary, TestSelectIntWTree, TestSelectIntPerfect,
+ TestGEqCompany, TestGEqGRose, TestGEq.
+ The GShow test gives results far better than the reference (in fact,
+ SmashA's gshow for Company gives exactly the same results as the derived show).
+] 
+[The current version of Smash is SmashA.
+oleg@okmij.org**20080311092952] 
+[Added usage instructions to test.hs and an option to run all tests.
+Alexey Rodriguez <mrchebas@gmail.com>**20080311142529] 
+[The new test, RmWeights, passes ok
+oleg@okmij.org**20080312034229] 
+[Added a new test of equality of nested datatypes: PerfectTrees. It passes ok.
+oleg@okmij.org**20080312035856] 
+[forgot UpdateSalaryDef
+patrikj@chalmers.se**20080311224059] 
+[Added the fulltree test to the suite.
+alex@cs.uu.nl**20080311223430
+ 
+ The data generation scenario has been added to the test suite, by means of
+ the fulltree test. The test checks whether a library can generically produce
+ data. A binary tree and a list are generated.
+ 
+ The following libs are implemented:
+ - EMGM
+ - LIGD
+ - PolyP
+ - Spine
+ - Uniplate
+ 
+ These libs remain to be done:
+ - RepLib   (Alexey/Alex?)
+ - SYB1_2   (Alexey?
+ - SmashA   (Oleg?)
+ 
+] 
+[Adding new FullTree test.
+oleg@okmij.org**20080315065319] 
+[Added Efficiency. FullTree was added in the previous patc, but the e-mail notification to the list didn't make it.
+oleg@okmij.org**20080315073321] 
+[Implementing shallow map, aka gMapQ. TestGMapQ1 nd TestGMapQ2 now work.
+oleg@okmij.org**20080315090221] 
+[PolyP details
+patrikj@chalmers.se**20080314165926] 
+[Towards working performance benchmark
+patrikj@chalmers.se**20080316205451] 
+[NOW/Efficiency compilation fixes
+patrikj@chalmers.se**20080316205654] 
+[PolyP/Efficiency compilation fixes
+patrikj@chalmers.se**20080316205735] 
+[RepLib/Efficiency comp. fixes
+patrikj@chalmers.se**20080316205841] 
+[SYB1_2/Efficiency comp. fixes
+patrikj@chalmers.se**20080316205904] 
+[TestEfficiency running for most approaches (but no good benchmark)
+patrikj@chalmers.se**20080316205928] 
+[Test case overview
+patrikj@chalmers.se**20080317103322] 
+[Made CrushRight more idiomatic for RepLib.
+Alexey Rodriguez <mrchebas@gmail.com>**20080317125236] 
+[Removed rests of LIGD-style CrushRight from RepLib
+Alexey Rodriguez <mrchebas@gmail.com>**20080317125401] 
+[TestGEqNGRose also works. It was tough. It seems it is possible to specify local explicit universal quantification in type-class constraints. So, constraints can indeed be higher-rank. So, am I done with all examples?
+oleg@okmij.org**20080318060547] 
+[GMapQ1 test for RepLib.
+Alexey Rodriguez <mrchebas@gmail.com>**20080317180326] 
+[Spine corrections
+alex@cs.uu.nl**20080318124359] 
+[Completed Uniplate tests.
+alex@cs.uu.nl**20080313160032] 
+[Ad-hoc cases with SYB-style combinators and with type-classes for RepLib
+Alexey Rodriguez <mrchebas@gmail.com>**20080318142055] 
+[RepLib: BinTreeReps added
+Alexey Rodriguez <mrchebas@gmail.com>**20080318142729] 
+[Demoting GShow to literally satisfy the GShow tests.
+oleg@okmij.org**20080319003055] 
+[More documentation on GShowExt.lhs in EMGM
+Alexey Rodriguez <mrchebas@gmail.com>**20080319105106] 
+[Use crushRight1 instead of foldr in RepLib
+Alexey Rodriguez <mrchebas@gmail.com>**20080319125823] 
+[Demonstrating that flattenListTree, sumListTree and sizeListTree apply, AS THEY ARE, not only to [WTree Int Int] but to *ANY* data that includes WTree a b
+oleg@okmij.org**20080322111208] 
+[Writing CrushRight that literally mimics the corresponding code in RepLib, EMGM, etc. I shall argue that requiring such a literal reproduction is like shootout requiring Haskell code be written in the same style as ML or C code, or vice versa. Each language has its idioms and style, even if the  the solutions are extensionally the same.
+oleg@okmij.org**20080322111308] 
+[A very small change to the library, which makes RmWeights look like people wanted it to see. The old way still works. I'm still unsure how am I feeling about this. Need to re-run the test, although I think I checked most if not all files.
+oleg@okmij.org**20080326090453] 
+[Added arity-3 representation for BinTree in EMGM
+Alexey Rodriguez <mrchebas@gmail.com>**20080325125613] 
+[Tidying up in EMGM
+Alexey Rodriguez <mrchebas@gmail.com>**20080325125642] 
+[Arity-3 crushRight for EMGM
+Alexey Rodriguez <mrchebas@gmail.com>**20080325125712] 
+[Refactoring in generic transpose
+Alexey Rodriguez <mrchebas@gmail.com>**20080325130406] 
+[Remark about NGRose for EMGM
+Alexey Rodriguez <mrchebas@gmail.com>**20080327134238] 
+[Universe test in FoldTree for Uniplate
+alex@cs.uu.nl**20080327204828] 
+[The last file needed adjustment. All tests pass.
+oleg@okmij.org**20080329075421] 
+[More comments.
+oleg@okmij.org**20080329075452] 
+[Data and Typeable are generated by standalone deriving for SYB1_2, needs GHC 6.8.2
+Alexey Rodriguez <mrchebas@gmail.com>**20080330174024] 
+[Generic equality for syb3 loops strangely when casting the second arguments
+Alexey Rodriguez <mrchebas@gmail.com>**20080330174217] 
+[import BinTreeReps
+Alexey Rodriguez <mrchebas@gmail.com>**20080330174410] 
+[TestGMapQ1 for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330180034] 
+[TestSelectIntWTree for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330201746] 
+[Data and Typeable for WTree use standalone deriving for SYB1_2
+Alexey Rodriguez <mrchebas@gmail.com>**20080330202545] 
+[WTree representation for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330202642] 
+[SelectIntPerfect for syb3, does not work: context reduction loops
+Alexey Rodriguez <mrchebas@gmail.com>**20080330204426] 
+[Standalone deriving Typeable and Data for Perfect in SYB1_2
+Alexey Rodriguez <mrchebas@gmail.com>**20080330205759] 
+[TestSelectSalary for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330210754] 
+[TestGMapQ2 and TestUpdateSalary for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330220035] 
+[Idiomatic RmWeights for SYB1_2
+Alexey Rodriguez <mrchebas@gmail.com>**20080330220527] 
+[RmWeights for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330221145] 
+[Trivial, failing GMap for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080330221350] 
+[CrushRight clarifications, and tidying up
+Alexey Rodriguez <mrchebas@gmail.com>**20080330222853] 
+[I broke the representations for Uniplate, fixing them.
+Alexey Rodriguez <mrchebas@gmail.com>**20080331085747] 
+[CrushRight not supported in syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080331085829] 
+[Fixed Spine library and added Nested for Spine
+alex@cs.uu.nl**20080331092343] 
+[Some more information on failure of GEq, and manual representation in BinTree that would make it work.
+Alexey Rodriguez <mrchebas@gmail.com>**20080331130822] 
+[File demonstrating buggy Data instances generated by Derive.
+Alexey Rodriguez <mrchebas@gmail.com>**20080331131343] 
+[Minor fix in Uniplate.CrushRight
+patrikj@chalmers.se**20080331122017] 
+[All tests now compile for PolyP (but many fail)
+patrikj@chalmers.se**20080331151349] 
+[syb3 now compiles except for the two missing tests: Nested and FullTree
+patrikj@chalmers.se**20080331151556] 
+[syb-with-class installation notes
+patrikj@chalmers.se**20080331152107] 
+[Some more efficiency benchmark work
+patrikj@chalmers.se**20080331215101] 
+[EMGM FullTree for WTree (testing if we could use FullTree for the performance benchmark)
+patrikj@chalmers.se**20080331215257] 
+[Added Derive.hs from HAppS distribution in test suite, in the hope of fixing the derive bug
+Alexey Rodriguez <mrchebas@gmail.com>**20080401121254] 
+[Fix Derive.hs to avoid recursion in Data instances
+Alexey Rodriguez <mrchebas@gmail.com>**20080401130026
+ 
+ * We only make context for type variables
+   otherwise it generates contexts such as:
+  
+     instance (Data ctx a,Data ctx [a],...) =>
+        Data ctx [a] where ...
+  
+   rather than
+   
+     instance (Data ctx a,...) =>
+        Data ctx [a] where ...
+  
+ 
+] 
+[GEq works for syb3 now.
+Alexey Rodriguez <mrchebas@gmail.com>**20080401131241] 
+[Some notes to the BugBinTree file.
+Alexey Rodriguez <mrchebas@gmail.com>**20080401131315] 
+[WTree uses the new Derive, Company uses the old, otherwise it breaks. Perfect works with neither.
+Alexey Rodriguez <mrchebas@gmail.com>**20080401134021] 
+[Start of new time / efficiency measurement
+patrikj@chalmers.se**20080401130800] 
+[Yet more info for bug
+Alexey Rodriguez <mrchebas@gmail.com>**20080401163721] 
+[GRose test for syb3 with hand-written Data instance.
+Alexey Rodriguez <mrchebas@gmail.com>**20080401163823] 
+[Attempted to write an instance for Perfect and failed.
+Alexey Rodriguez <mrchebas@gmail.com>**20080401182045] 
+[Performace test - now with both GEq and SelectIntWTree
+patrikj@chalmers.se**20080402082615] 
+[Third performance test added
+patrikj@chalmers.se**20080402095433] 
+[FullTree for replib
+alex@cs.uu.nl**20080402093758] 
+[Failed attempt at using PlateTypeable instances to speed up Uniplate. It speeds up, but by a small amount.
+Alexey Rodriguez <mrchebas@gmail.com>**20080402131915] 
+[Added the Transpose test.
+oleg@okmij.org**20080403041521] 
+[Uniplate RmWeights efficient version
+patrikj@chalmers.se**20080402192026] 
+[FullTree for SYB
+alex@cs.uu.nl**20080402212052] 
+[CrushRight test was using contructor information, switched to correct test.
+Alexey Rodriguez <mrchebas@gmail.com>**20080410130108] 
+[Note on RmWeights/Smash
+Alexey Rodriguez <mrchebas@gmail.com>**20080410195511] 
+[Smash probably does not support extensible generic functions (according to the tech. report rules). If I am wrong, please do correct me!
+Alexey Rodriguez <mrchebas@gmail.com>**20080412013411] 
+[FullTree adaption to a list of all posibilities.
+alex@cs.uu.nl**20080417121852
+ 
+ Libs remaining to be done: EMGM, PolyP, LIGD, SmashA
+ 
+] 
+[Standalone deriving works for BinTree after all, strange. Tested with ghc 6.8.2
+Alexey Rodriguez <mrchebas@gmail.com>**20080418110147] 
+[Fixed EMGM FullTree
+Alexey Rodriguez <mrchebas@gmail.com>**20080418115213] 
+[Made FullTree more uniform in RepLib
+Alexey Rodriguez <mrchebas@gmail.com>**20080418120132] 
+[Fixed FullTree for LIGD
+Alexey Rodriguez <mrchebas@gmail.com>**20080418121459] 
+[Fixed fulltree for PolyP
+Alexey Rodriguez <mrchebas@gmail.com>**20080418141955] 
+[FullTree for syb3
+Alexey Rodriguez <mrchebas@gmail.com>**20080418151656] 
+[Comment on Smash generator (fulltree)
+Alexey Rodriguez <mrchebas@gmail.com>**20080418152304] 
+[Test of excluding data types from the supported universe
+oleg@okmij.org**20080429003939] 
+[Demonstrating the extensibility of GShowExt
+oleg@okmij.org**20080429015606] 
+[huh? TestUpdateSalary was broken for EMGM. Fixed.
+Alexey Rodriguez <mrchebas@gmail.com>**20080508124549] 
+[GM has been obliterated.
+Alexey Rodriguez <mrchebas@gmail.com>**20080508125648] 
+[Some comments on Universe size for Company in Smash
+Alexey Rodriguez <mrchebas@gmail.com>**20080617151414] 
+[Added gmap to SYB
+oleg@okmij.org**20080701113226] 
+[Added rmWeightsWTree for PolyP. It is specific to WTree (so it does not traverse other structures), but it uses generic functionality for non-weight constructors, so it is useful in practice.
+Alexey Rodriguez <mrchebas@gmail.com>**20080723094522] 
+[Restored gmap to failing but added both Oleg's and Claus' gmap with comments.
+Alexey Rodriguez <mrchebas@gmail.com>**20080723133409] 
+[Compositional GMap for SYB1_2
+oleg@okmij.org**20080729074046] 
+[CrushRight in the style of Oleg and Claus, this needs gunfold and toConstr methods for WTree.
+Alexey Rodriguez <mrchebas@gmail.com>**20080902090045] 
+[Dropped old stuff from SYB CrushRight
+Alexey Rodriguez <mrchebas@gmail.com>**20080902090212] 
+[Removed old (unused) Smash directory
+Alexey Rodriguez <mrchebas@gmail.com>**20080902091443] 
+[Cleaned up SYB1_2's GMap module.
+Alexey Rodriguez <mrchebas@gmail.com>**20080902123811] 
+[Imported (slightly edited) multirec tests from Erik's branch.
+Alexey Rodriguez <mrchebas@gmail.com>**20090210074640] 
+[Edited Erik's initial representation of the company datatype and adapted the show function to the admittedly contrived TestGShow test.
+Alexey Rodriguez <mrchebas@gmail.com>**20090221214935] 
+[Made the Select tests working again. Wrote a nice compos-based version for Company, Wtree select is still ugly, hard to improve due to polymorphism.
+Alexey Rodriguez <mrchebas@gmail.com>**20090221224319] 
+[RmWeights test for multirec.
+Alexey Rodriguez <mrchebas@gmail.com>**20090221225938] 
+[FullTree test works. Had to add comparison on type reps which is not included in standard multirec!!!
+Alexey Rodriguez <mrchebas@gmail.com>**20090221233742] 
+[Added definition of GMapQ and an explanation on why HO-generic functions are not supported.
+Alexey Rodriguez <mrchebas@gmail.com>**20090226162139] 
+[Added forgotten Hand/ directory
+patrikj@chalmers.se**20090222215715] 
+[Handy script to compute a table summarizing the performance results.
+Alexey Rodriguez <mrchebas@gmail.com>**20090226235731] 
+[SelectInt in hand written implementation was inefficient due to the use of list concatenation. Rewritten it, giving it the expected best performance overall.
+Alexey Rodriguez <mrchebas@gmail.com>**20090301105630] 
+[Forgotten commit giving an easy to invoke gmap for EMGM
+Alexey Rodriguez <mrchebas@gmail.com>**20090301105836] 
+[A better crush-right that is arity-independent
+oleg@okmij.org**20090930083558] 
+[Making crushRight point-free
+alex@cs.uu.nl**20090930082026
+ Ignore-this: ad6b5d6c3d8fccc7a57f3205ad0ce00e
+] 

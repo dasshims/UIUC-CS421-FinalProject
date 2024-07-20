@@ -1,0 +1,2 @@
+all:
+	runghc test.hs

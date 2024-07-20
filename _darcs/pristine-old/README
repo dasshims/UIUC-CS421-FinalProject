@@ -1,0 +1,8 @@
+This repository collects generics libraries for Haskell.  It is part of an
+effort to develop a standard generics library that is suitably stable and 
+mature to be used in application code.
+
+The various libraries (or variants of one library) occupy one subdirectory
+per library.  In some cases there is an additional LIBNAME.examples directory 
+that includes further example code using the library LIBNAME.
+

@@ -1,0 +1,62 @@
+
+Generic programming libraries comparison/benchmark
+------------
+
+This directory contains a set of haskell programs that test generic
+functions. Each test consists of a module written by the "end user" in
+which he/she calls a type-indexed function on an existing data type
+(usually Company). This Haskell module, which may be found at the root
+directory, i.e. TestGEq.hs , imports a generic module. It is this generic
+module that contains the generic function, already specialised for the
+requested data type.
+
+Such a generic module exists for each generic programming library, it can
+be found in the library directory, i.e. LIGD/GEq.hs .  This module contains
+the generic function itself, which is written by the power user. The
+specialization of this generic function to, say, the Company data type is
+written by the End User.
+
+These generic modules use the framework provided by the generic library,
+which is written by the Library Writer.
+
+Running the tests
+-------
+Type
+
+  runghc test.hs
+
+in the command line.
+
+Generating expected results
+------
+
+Example to generate expected for TestSelectSalary:
+
+  runghc test --expected LIGD TestSelectSalary
+
+Generic test code
+------
+The present testing code is heavily based on code that Stephanie Weirich
+contributed to the generics repository.
+
+SYB3
+----
+The scrap your boilerplate with class tests (syb3) contain SYB code
+from Lämmel, Peyton Jones and others which can be downloaded from
+
+http://homepages.cwi.nl/~ralf/syb3/code.html
+
+However the actual library code is not shipped with the tests.
+The tests are meant to work with a version of the library distributed
+by HAppS:
+
+darcs get http://happs.org/HAppS/syb-with-class
+
+Install the library in your system prior to run the tests in syb3.
+
+
+Rules
+----
+Each test file (will) contains the rules that an approach must follow to
+say that the approach passes the test. Some approaches produce the expected
+results, but they do so by cheating.

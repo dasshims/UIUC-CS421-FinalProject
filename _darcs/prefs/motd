@@ -1,0 +1,4 @@
+Generics Libraries for Haskell.
+
+This is a collection of Haskell libraries providing generics support, used as a 
+basis to develop a standard generics library.

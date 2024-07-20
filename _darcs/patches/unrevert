@@ -1,0 +1,666 @@
+
+New patches:
+
+[unrevert
+anonymous**20070621101842] 
+<
+> {
+hunk ./comparison/NOW/NOW.hs 43
+     ExprR     :: Type a -> Type (Expr a)
+     NatR      :: Type Nat
+   -- AG: added type signatures for eval test here due to the non-openness
+-    TreeR     ::  Type a -> Type w -> Type (WTree a w)
++    TreeR     ::  Type a -> Type w -> Type (Tree a w)
+     CompanyR  ::  Type Company
+     DeptR     ::  Type Dept
+     UnitCDR   ::  Type CD.Unit
+hunk ./comparison/NOW/NOW.hs 90
+   toSpine (GRoseR f a :> GRose x xs) = Con grose :$ (a :> x) :$ (f (GRoseR f a) :> xs)
+ 
+   -- Constructor reps
+-  leaf :: Constr (a -> WTree a w)
++  leaf :: Constr (a -> Tree a w)
+   leaf = Descr { constr   = Leaf,
+                  name     = "Leaf",
+                  arity    = 1,
+hunk ./comparison/NOW/NOW.hs 96
+                  fixity   = Prefix 10,
+                  order    = (0, 3) }
+-  fork :: Constr (WTree a w -> WTree a w -> WTree a w)
++  fork :: Constr (Tree a w -> Tree a w -> Tree a w)
+   fork = Descr { constr   = Fork,
+                  name     = "Fork",
+                  arity    = 2,
+hunk ./comparison/NOW/NOW.hs 102
+                  fixity   = Prefix 10,
+                  order    = (1, 3) }
+-  withweight :: Constr (WTree a w -> w -> WTree a w)
++  withweight :: Constr (Tree a w -> w -> Tree a w)
+   withweight = Descr { constr = WithWeight,
+                        name   = "WithWeight",
+                        arity  = 2,
+hunk ./comparison/PolyP/FoldTree.lhs 8
+ > listifySalary :: Company -> [Salary]
+ > listifySalary = error "PolyP does not handle the Company datatype"
+ 
+-> listifyInt :: WTree a w -> [w]
+-> listifyInt = error "PolyP does not handle the WTree a w datatype"
++> listifyInt :: Tree a w -> [w]
++> listifyInt = error "PolyP does not handle the Tree a w datatype"
+ 
+ On the other hand, PolyP can do _real_ folds (catas) on Regular
+ datatypes.
+hunk ./comparison/PolyP/GEqTree.lhs 9
+ > import GEq
+ > import TreeDatatype
+ 
+-Extension of generic equality for |WTree|s
++Extension of generic equality for |Tree|s
+ 
+ If we use the same definition as in GEq, then the comparison will look
+ at weights which is not the intended result.
+hunk ./comparison/PolyP/GEqTree.lhs 14
+ 
+-> equalTree :: WTree Int Int -> WTree Int Int -> Bool
++> equalTree :: Tree Int Int -> Tree Int Int -> Bool
+ > equalTree = pequal (==)
+ 
+hunk ./comparison/PolyP/GEqTree.lhs 17
+-The instance definition expresses that (WTree a) is a Regular,
++The instance definition expresses that (Tree a) is a Regular,
+ one-parameter datatype (the parameter being the label type). If the
+hunk ./comparison/PolyP/GEqTree.lhs 19
+-type arguments to WTree had been in the opposite order, we could
++type arguments to Tree had been in the opposite order, we could
+ perhaps have used out to throw away the weight, but that would have
+ been an ugly hack (not working for gmap, for example).
+ 
+hunk ./comparison/PolyP/GEqTree.lhs 26
+ > instance FunctorOf (SumF (ConstF a)
+ >                          (SumF (ProdF RecF RecF)
+ >                                (ProdF RecF ParF)))
+->                    (WTree a) where
++>                    (Tree a) where
+ >   inn (InL (ConstF a))                  = Leaf a
+ >   inn (InR (InL (RecF l :*: RecF r)))   = Fork l r
+ >   inn (InR (InR (RecF t :*: ParF w)))   = WithWeight t w
+hunk ./comparison/PolyP/GEqTree.lhs 37
+ >   constructorName (Leaf _)         = "Leaf"
+ >   constructorName (Fork _ _)       = "Fork"
+ >   constructorName (WithWeight t w) = "WithWeight"
+->   datatypeName _ = "WTree a"
++>   datatypeName _ = "Tree a"
++
++geqTree :: GRep Geq a => Tree a w -> Tree a w -> Bool
++geqTree (WithWeight t1 _) t2 = geqTree t1 t2
++geqTree t1 (WithWeight t2 _) = geqTree t1 t2
++geqTree (Fork t1 t1') (Fork t2 t2') = geqTree t1 t2 && geqTree t1' t2'
++geqTree (Leaf x) (Leaf y) = geq' over x y
++geqTree _ _ = False
+hunk ./comparison/PolyP/GShow.lhs 11
+ > gshowsCompany :: Company -> String
+ > gshowsCompany = error "PolyP does not handle this case"
+ 
++
+hunk ./comparison/PolyP/Reduce.lhs 7
+ 
+ > import TreeDatatype
+ 
+-> errorMsg = error "PolyP: Reduce test fails for WTree a w datatype."
++> errorMsg = error "PolyP: Reduce test fails for Tree a w datatype."
+ 
+hunk ./comparison/PolyP/Reduce.lhs 9
+-> sizeListTree :: [WTree a w] -> Int
++> sizeListTree :: [Tree a w] -> Int
+ > sizeListTree = errorMsg
+ 
+hunk ./comparison/PolyP/Reduce.lhs 12
+-> collectListTree :: [WTree a w] -> [a]
++> collectListTree :: [Tree a w] -> [a]
+ > collectListTree = errorMsg
+ 
+hunk ./comparison/PolyP/Reduce.lhs 15
+-> sumListTree :: [WTree Int w] -> Int
++> sumListTree :: [Tree Int w] -> Int
+ > sumListTree = errorMsg
+ 
+ But note that folding is supported for Regular datatypes.
+hunk ./comparison/RepLib/FoldTree.lhs 24
+ > import TreeDatatype
+ > import Language.Haskell.TH
+ 
+-> $(derive [''WTree])
++> $(derive [''Tree])
+ 
+ > class Rep1 GFoldTreeD a => GFoldTree a where
+ >   gfoldtree :: a -> [Int]
+hunk ./comparison/RepLib/FoldTree.lhs 54
+ > instance (GFoldTree a, GFoldTree b) => GFoldTree (a,b)
+ > instance (GFoldTree a) => GFoldTree [a]
+ 
+-> instance (GFoldTree a, GFoldTree w) => GFoldTree (WTree a w)
++> instance (GFoldTree a, GFoldTree w) => GFoldTree (Tree a w)
+ > instance GFoldTree Company
+ > instance GFoldTree Dept
+ > instance GFoldTree Unit
+hunk ./comparison/RepLib/Reduce.lhs 20
+ > import TreeDatatype
+ > import Language.Haskell.TH
+ 
+-> $(derive [''WTree])
++> $(derive [''Tree])
+ 
+ > class Rep1 GColD a => GCol a where
+ >    gcol :: a -> [Int]
+hunk ./comparison/RepLib/Reduce.lhs 49
+ > instance GCol Char
+ > instance (GCol a, GCol b) => GCol (a,b)
+ > instance (GCol a) => GCol [a]
+-> instance (GCol a, GCol w) => GCol (WTree a w) where
++> instance (GCol a, GCol w) => GCol (Tree a w) where
+ >    gcol (Leaf a) = gcol a
+ >    gcol (Fork l r) = gcol l ++ gcol r
+ >    gcol (WithWeight t w) = gcol t
+hunk ./comparison/RepLib/Reduce.lhs 60
+ > sizeListTree :: GCol t => [t] -> Int
+ > sizeListTree = length . gcol
+ 
+-> sumListTree :: (GCol w) => [WTree Int w] -> Int
++> sumListTree :: (GCol w) => [Tree Int w] -> Int
+ > sumListTree = sum . gcol
+hunk ./comparison/SYB1_2/FoldTree.lhs 10
+ > import TreeDatatype
+ > import CompanyDatatypes
+ 
+-> listifyInt :: WTree Int Int -> [Int]
++> listifyInt :: Tree Int Int -> [Int]
+ > listifyInt = everything (++) ([] `mkQ` (:[]))
+ 
+ > listifySalary :: Company -> [Salary]
+hunk ./comparison/SYB1_2/Reduce.lhs 16
+ sum the elements in the weights part if these contained trees.
+ 
+ > {-
+-> sumElements :: forall b.(Data b) => WTree Int b -> Int
++> sumElements :: forall b.(Data b) => Tree Int b -> Int
+ > sumElements = everything (+) ((0::Int) `mkQ` fromLeaf)
+ >   where
+ >     -- Horribly confusing error if the type signature is omitted
+hunk ./comparison/SYB1_2/Reduce.lhs 20
+->     fromLeaf :: WTree Int b -> Int
++>     fromLeaf :: Tree Int b -> Int
+ >     fromLeaf (Leaf x) = x
+ >     fromLeaf _ = 0
+ 
+hunk ./comparison/SYB1_2/Reduce.lhs 25
+ > foldTree :: forall a c.(Data a,Data c)
+->          => (c -> c -> c) -> c -> WTree c a -> c
++>          => (c -> c -> c) -> c -> Tree c a -> c
+ > foldTree op b = everything op (b `mkQ` fromLeaf)
+ >   where
+hunk ./comparison/SYB1_2/Reduce.lhs 28
+->     fromLeaf :: WTree c a -> c
++>     fromLeaf :: Tree c a -> c
+ >     fromLeaf (Leaf x) = x
+ >     fromLeaf _ = b
+ > -}
+hunk ./comparison/SYB1_2/Reduce.lhs 58
+ >     collectElem x = [x]
+ 
+ 
+-> collectListTree :: forall a w.(Data a,Data w) => [WTree a w] -> [a]
++> collectListTree :: forall a w.(Data a,Data w) => [Tree a w] -> [a]
+ > collectListTree = gen_collect (undefined :: a)
+ 
+hunk ./comparison/SYB1_2/Reduce.lhs 61
+-> sizeListTree :: forall a w.(Data a,Data w) => [WTree a w] -> Int
++> sizeListTree :: forall a w.(Data a,Data w) => [Tree a w] -> Int
+ > sizeListTree = length . collectListTree
+ 
+hunk ./comparison/SYB1_2/Reduce.lhs 64
+-> sumListTree :: forall w.(Data w) => [WTree Int w] -> Int
++> sumListTree :: forall w.(Data w) => [Tree Int w] -> Int
+ > sumListTree = sum . collectListTree
+hunk ./comparison/Smash/FoldTree.hs 15
+ import Smash.TreeDats
+ 
+ 
+--- originally: listifyInt :: WTree Int Int -> [Int]
++-- originally: listifyInt :: Tree Int Int -> [Int]
+ -- inferred type: listifyInt :: (Dat (SCons Int SNil) a) => a -> [Int]
+ -- We can handle any thing whatsoever, whether it has ints or not...
+ listifyInt xs = 
+hunk ./comparison/Smash/TreeDats.hs 24
+ -- Syb4 already has instances for Int, Bool, Char, any array and a pair
+ 
+ -- Again, cut and paste these constraints from the GHCi error message 
+-instance (SApply spec (WTree a w), SApply spec a, SApply spec w,
++instance (SApply spec (Tree a w), SApply spec a, SApply spec w,
+ 	 Dat spec a, Dat spec w)
+hunk ./comparison/Smash/TreeDats.hs 26
+-    => Dat spec (WTree a w) where
++    => Dat spec (Tree a w) where
+   genmapq spec reducer (Leaf a)  = reducer [gmapq spec reducer a]
+   genmapq spec reducer (Fork tl tr)  = reducer [gmapq spec reducer tl,
+ 						gmapq spec reducer tr]
+hunk ./comparison/SmashA/FoldTree.hs 17
+ import SmashA.TreeDats
+ 
+ 
+--- originally: listifyInt :: WTree Int Int -> [Int]
++-- originally: listifyInt :: Tree Int Int -> [Int]
+ -- inferred type: 
+ --   listifyInt :: (STApply (HCons (Int -> [Int]) HNil) a1 wi w,
+ --                  LDat (TL_red [a]) (HCons (Int -> [Int]) HNil) a1 wi) =>
+hunk ./comparison/SmashA/Reduce.hs 5
+ {-# OPTIONS_GHC -fallow-overlapping-instances #-}
+   -- The latter extension is needed only for GHC 6.4, it seems...
+ 
+--- WTree folding
++-- Tree folding
+ 
+ module SmashA.Reduce (sizeListTree, collectListTree, sumListTree) where
+ 
+hunk ./comparison/SmashA/Reduce.hs 35
+ collectListTree t = collectIntLeaves (:[]) concat t
+ sumListTree t = collectIntLeaves id sum t
+ 
+-example :: [WTree Int Int]
++example :: [Tree Int Int]
+ example = [WithWeight (Leaf 38) 1 `Fork` WithWeight (Leaf 42) 2
+           ,WithWeight (Leaf 25 `Fork` Leaf 48) 2]
+ 
+hunk ./comparison/SmashA/TreeDats.hs 20
+ -- derive it manually. It is pretty straightforward. We can use Derive
+ -- or TH (as is done by RepLib).
+ -- But here, we just do it manually. The derivation is the straightforward
+--- function of the definition of the WTree data type.
++-- function of the definition of the Tree data type.
+ 
+ -- Syb4A already has instances for Int, Bool, Char, any array and a pair
+ 
+hunk ./comparison/SmashA/TreeDats.hs 26
+ instance (GAPP (TL_red w) spec a w w,
+ 	  GAPP (TL_red w) spec b w w,
+-	  GAPP (TL_red w) spec (WTree a b) w w)
+-    => LDat (TL_red w) spec (WTree a b) w where
++	  GAPP (TL_red w) spec (Tree a b) w w)
++    => LDat (TL_red w) spec (Tree a b) w where
+   gin tlab@(TL_red f) spec (Leaf a)  = f [gapp tlab spec a]
+   gin tlab@(TL_red f) spec (Fork tl tr)  = f [gapp tlab spec tl,
+ 					      gapp tlab spec tr]
+hunk ./comparison/SmashA/TreeDats.hs 37
+ 
+ instance (GAPP (TL_red_ctr w) spec a w w,
+ 	  GAPP (TL_red_ctr w) spec b w w,
+-	  GAPP (TL_red_ctr w) spec (WTree a b) w w)
+-    => LDat (TL_red_ctr w) spec (WTree a b) w where
++	  GAPP (TL_red_ctr w) spec (Tree a b) w w)
++    => LDat (TL_red_ctr w) spec (Tree a b) w where
+   gin tlab@(TL_red_ctr f) spec (Leaf a)  
+       = f "Leaf" [gapp tlab spec a]
+   gin tlab@(TL_red_ctr f) spec (Fork tl tr)
+hunk ./comparison/Spine/FoldTree.lhs 27
+ > everything :: (r -> r -> r) -> Query r -> Query r
+ > everything op q t x = foldl1 op ([q t x] ++ mapQ (everything op q) t x)
+ 
+-> listifyInt :: WTree Int Int -> [Int]
++> listifyInt :: Tree Int Int -> [Int]
+ > listifyInt = everything (++) ([] `mkQ` (:[])) (TreeWR IntR IntR)
+ >   where
+ >     mkQ :: [Int] -> (Int -> [Int]) -> Type a -> a -> [Int]
+hunk ./comparison/Spine/Reduce.lhs 10
+ 
+ > errorMsg = error "Reduce test not yet implemented"
+ 
+-> sizeListTree :: [WTree a w] -> Int
++> sizeListTree :: [Tree a w] -> Int
+ > sizeListTree = errorMsg
+ 
+hunk ./comparison/Spine/Reduce.lhs 13
+-> collectListTree :: [WTree a w] -> [a]
++> collectListTree :: [Tree a w] -> [a]
+ > collectListTree = errorMsg
+ 
+hunk ./comparison/Spine/Reduce.lhs 16
+-> sumListTree :: [WTree Int w] -> Int
++> sumListTree :: [Tree Int w] -> Int
+ > sumListTree = errorMsg
+hunk ./comparison/Spine/SYB1.hs 76
+                   Type a ->
+                   Type (GRose f a)
+ {- The other tree -}
+-    TreeWR    ::  Type a -> Type w -> Type (T.WTree a w)
++    TreeWR    ::  Type a -> Type w -> Type (T.Tree a w)
+ {-# LINE 336 "SYB1.lhs" #-}
+   infixl 1 :>
+   data Typed a  =  (:>) { typeOf :: Type a, val :: a }
+hunk ./comparison/Spine/SYB1.hs 361
+     ListR'1    ::  Type' f -> Type' (List' f)
+     PairR'2    ::  Type' f -> Type' g -> Type' (Pair' f g)
+     TreeR'1    ::  Type' f -> Type' (Tree' f)
+---    TreeWR     ::  Type' a -> Type' w -> Type' (T.WTree a w)
++--    TreeWR     ::  Type' a -> Type' w -> Type' (T.Tree a w)
+ {-# LINE 1117 "SYB1.lhs" #-}
+   infixl 1 ::>
+   data Typed' f a  =  (::>) { typeOf' :: Type' f, val' :: f a }
+hunk ./comparison/TestGEq.lhs 1
++
++
++This test exercices GENERIC read, show, and eq for the company
++datatypes which we use a lot. The output of the program should be
++"True" which means that "gread" reads what "gshow" shows while the
++read term is equal to the original term in terms of "geq".
++
++
+ > import GEq (equalCompany)
+ > import CompanyDatatypes
+ 
+hunk ./comparison/TestGEq.lhs 19
+ >              , equalCompany genCom genCom''
+ >             )
+ 
++
+hunk ./comparison/TestGEqTree.lhs 1
++
++
+ Here we test extensibility of generic functions.
+ 
+ The test must use the generic equality defined in GEq
+hunk ./comparison/TestGEqTree.lhs 6
+-and extend it with a case for |WTree|s.
++and extend it with a case for |Tree|s.
+ 
+ > import GEqTree (equalTree)
+ > import TreeDatatype
+hunk ./comparison/TestReduce.lhs 4
+ > import Reduce
+ > import TreeDatatype
+ 
+-> example :: [WTree Int Int]
++> example :: [Tree Int Int]
+ > example = [WithWeight (Leaf 38) 1 `Fork` WithWeight (Leaf 42) 2
+ >           ,WithWeight (Leaf 25 `Fork` Leaf 48) 2]
+ 
+hunk ./comparison/TreeDatatype.hs 8
+ 
+ import Data.Generics
+ 
++
+ -- A parameterised datatype for binary trees with data at the leafs
+hunk ./comparison/TreeDatatype.hs 10
+---   and possible "weight" labels
+-data WTree a w = Leaf a
+-               | Fork (WTree a w) (WTree a w)
+-               | WithWeight (WTree a w) w
++data -- (Data a, Data w) =>
++     -- let the functions constrain the datatype
++     Tree a w = Leaf a
++              | Fork (Tree a w) (Tree a w)
++              | WithWeight (Tree a w) w
+        deriving (Typeable, Data, Show)
+ 
+ 
+hunk ./comparison/TreeDatatype.hs 19
+ -- A typical tree
+-mytree :: WTree Int Int
++mytree :: Tree Int Int
+ mytree = Fork (WithWeight (Leaf 42) 1)
+               (WithWeight (Fork (Leaf 88) (Leaf 37)) 2)
+ 
+hunk ./comparison/TreeDatatype.hs 24
+ -- and another
+-mytree2 :: WTree Int Int
++mytree2 :: Tree Int Int
+ mytree2 = Fork (Leaf 42)
+                (WithWeight (Fork (Leaf 88) (Leaf 37)) 3)
+ 
+hunk ./comparison/TreeDatatype.hs 29
+ -- yet one more
+-mytree3 :: WTree Int Int
++mytree3 :: Tree Int Int
+ mytree3 = Fork (WithWeight (Leaf 42) 1)
+                (WithWeight (Leaf 88) 2)
+}
+
+Context:
+
+[Added NOW Efficiency file
+agerdes@mac.com**20070620090349] 
+[Missing NOW files added, added NOW to time Makefile
+agerdes@mac.com**20070620134224] 
+[Nested data types for Smash. Less easy, but possible -- and even a bit insightful.
+oleg@okmij.org**20070619105335
+ Nested data types with Smash is a bit less obvious: polymorphic recursion
+ in the presence of constraints doesn't quite work. Smash is more general
+ than is required for this task. The solution is nevertheless possible and
+ short. It also illustrates how to pass generic functions as arguments
+ without any need for higher-rank types. So, Smash's generic functions
+ are first-class, and have always been. It just goes to show to
+ higher-rank is already present in Haskell98.
+] 
+[Remove -fglasgow-exts for Uniplate's Reduce, instead of an explicit type signature use asTypeOf
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070619003722] 
+[Fix up the Uniplate Reduce benchmark to meet the specificatino
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070618001248] 
+[Derive Data/Typeable for Perfect
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070618000359] 
+[Added Uniplate lib and fixed reduce extensions import
+agerdes@mac.com**20070618095957] 
+[Add Uniplate examples to the suite
+Neil Mitchell <http://www.cs.york.ac.uk/~ndm/>**20070618000557] 
+[Another conflict resolve patch
+agerdes@mac.com**20070618091607] 
+[Resolved conflict in NOW
+agerdes@mac.com**20070618073710] 
+[Added PolyP/Efficiency (second best)
+patrikj@chalmers.se**20070617132341] 
+[Two more fixes related to the previous NOW patch
+patrikj@chalmers.se**20070617130337] 
+[Trivial changes to resolve conflict when applying Alex patch in NOW/
+patrikj@chalmers.se**20070617124900] 
+[NOW reduce function + Paradis fix
+agerdes@mac.com**20070616190005] 
+[Added time target to main Makefile
+patrikj@chalmers.se**20070617124343] 
+[Added RepLib/Efficiency (fastest so far)
+patrikj@chalmers.se**20070617113620] 
+[RepLib whitespace cleanup
+patrikj@chalmers.se**20070617113302] 
+[added SYB1_2/Efficiency (slowest so far)
+patrikj@chalmers.se**20070617105325] 
+[Added log.txt with an overview of test impl. status
+patrikj@chalmers.se**20070617101743] 
+[Minor alignment fixes in Spine/GEq
+patrikj@chalmers.se**20070617093827] 
+[Added simple test of efficiency (to LIGD, Spine, EMGM so far)
+patrikj@chalmers.se**20070617093540] 
+[EMGM: corrected and completed ...Reps files
+patrikj@chalmers.se**20070617093223] 
+[Cleaning up trailing whitespace
+patrikj@chalmers.se**20070617092945] 
+[Replaced OPTIONS with OPTIONS_GHC (all are GHC-specific)
+patrikj@chalmers.se**20070617092550] 
+[Cleaning up NOW (resolved ghc warnings + whitespace).
+patrikj@chalmers.se**20070616135528] 
+[renamed GL to EMGM + unified the lib order in test.hs and the table in the paper
+patrikj@chalmers.se**20070616133324] 
+[Just cleaning.
+patrikj@chalmers.se**20070616132054] 
+[renamed GM to GMsec3 + cleaning
+patrikj@chalmers.se**20070616131909] 
+[Renamed Tree to WTree (same as paper)
+patrikj@chalmers.se**20070616093542] 
+[Completed LIGD/GEqTree with an implementation that works (by representing weighted trees by stripping the weight).
+patrikj@chalmers.se**20070615190916] 
+[LIGD/Nested (working) and LIGD/GEqTree (failing) added
+patrikj@chalmers.se**20070615174012] 
+[LIGD: trimmed spaces + aligned + fixed comments + small rename
+patrikj@chalmers.se**20070615164232] 
+[Added the rest of the PolyP test cases (most failing)
+patrikj@chalmers.se**20070613174113] 
+[Cleaned up whitespace + added flags to PolyP example
+patrikj@chalmers.se**20070613173810] 
+[Added PolyP/GEqTree.hs (failing because PolyP cannot extend a polytypic function in this way)
+patrikj@chalmers.se**20070613151357] 
+[Trimming whitespace (no semantic change)
+patrikj@chalmers.se**20070613151326] 
+[GL GRose equality
+agerdes@mac.com**20070613115053] 
+[Added comparison/PolyP/PolyLib
+patrikj@chalmers.se**20070613110904] 
+[Added conparison/PolyP
+patrikj@chalmers.se**20070613110748] 
+[Added test with a nested datatype
+agerdes@mac.com**20070612134400] 
+[Initial Generic Programming, Now! checkin and removed unnecessary files.
+agerdes@mac.com**20070607221426] 
+[Corrected reduce function for RepLib
+agerdes@mac.com**20070605224944] 
+[Updated to the latest version of GL, code due to Bruno
+Alexey Rodriguez <alexey@cs.uu.nl>**20070607163841] 
+[New test: can a generic function be extended in another module?
+Alexey Rodriguez <alexey@cs.uu.nl>**20070607160501
+ 
+ The new test requires to extend generic equality in another module,
+ take a look at TestGEqTree.lhs and GL/GEqTree.lhs for details.
+ 
+] 
+[Generic minimum/maximum.
+oleg@okmij.org**20070605070503] 
+[GAPP makes instance derivation automatic. The LDat instance becomes a simple function of the datatype definition.
+oleg@okmij.org**20070605025716] 
+[More comments and examples.
+oleg@okmij.org**20070605010835] 
+[Added reduce test.
+oleg@okmij.org**20070602103017] 
+[Added GMap. Generic map is indeed only one line, for any traversable data type.
+oleg@okmij.org**20070602095745] 
+[generic equality is implementable in SmashA. Added Geq test.
+oleg@okmij.org**20070602092426] 
+[Matching the behavior of Haskell's show.
+oleg@okmij.org**20070601001338] 
+[Spine fails nicely on Reduce
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531161300] 
+[SYB1_2 implements the new Reduce test, but fails because of inherent limitations.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531155719] 
+[More grose error messages
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531154430] 
+[Reduce tests local redefinitions better.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531152805
+ 
+ Previously, collect would gather all the |Int| values
+ of a |BinTree Int|. But this could also collect |Int| values
+ other than the Tree payload, i.e. weights, balancing info.
+ 
+ So this test now uses a value of type |Tree a b| where the first
+ argument is the element type and the second the weight type. The test
+ requires that collect only gathers |a| values, excluding any content
+ such as the weights even if |a=b| like in |Tree Int Int|
+ 
+ LIGD, GL and GM have been updated. The rest must be done still.
+ 
+] 
+[grose equality not implemented in GL
+Alexey Rodriguez <alexey@cs.uu.nl>**20070531152652] 
+[The reduce functions for SYB are more honest: no more explicit pattern matching.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070530164235] 
+[Added three tests: GShow, FoldTree, Paradize for SmashA.
+oleg@okmij.org**20070531024419] 
+[Smash the rest of your boilerplate.
+oleg@okmij.org**20070531013323] 
+[test - library choice
+agerdes@mac.com**20070530081054
+ 
+ Added the possibility to specify which libraries should be tested. If no
+ argument is given all libraries are tested, just as before. If you want
+ to run a single or couple of libs, just give the name as an argument. For
+ example:
+ 
+ runghc test.hs GM Smash
+ 
+] 
+[add GShow and Paradize benchmarks
+oleg@okmij.org**20070529075749] 
+[adding Smash
+oleg@okmij.org**20070526092159] 
+[Alex's final RepLib code, still some warnings to fix
+Alexey Rodriguez <alexey@cs.uu.nl>**20070515100300] 
+[Missing tests give shorter errors.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070514162324] 
+[SYB Spine view, first version
+Alexey Rodriguez <alexey@cs.uu.nl>**20070507120611
+ 
+ The gshow expected result is too pesimistic. The Spine gshow does much
+ better, we should update all the other approaches (when possible).
+ 
+ Still to complete : map and reduce examples.
+ 
+] 
+[Initial RepLib checkin
+agerdes@mac.com**20070430222858] 
+[Added GM and GL
+agerdes@mac.com**20070402131851] 
+[Moved instances of GRose to a separate module.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322151547] 
+[Added Data and Typable instances for GRose
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322141053] 
+[Remove Rep1 from LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322135659] 
+[Changing definitions using Rep1 to use of Rep2, less repetition like this.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070322134949] 
+[Added trivial Makefile
+patrikj@chalmers.se**20070314105045] 
+[SYB does not support higher kinded types
+patrikj@chalmers.se**20070314104949] 
+[Removed trailing whitespace
+patrikj@chalmers.se**20070314104835] 
+[SYB cannot handle higher kinds
+patrikj@chalmers.se**20070314104721] 
+[Added reduce test for SYB
+Alexey Rodriguez <alexey@cs.uu.nl>**20070312131712] 
+[Equality on generalised rose trees
+Alexey Rodriguez <alexey@cs.uu.nl>**20070312093147] 
+[Renamed identifiers *Tree* -> *BinTree*
+Alexey Rodriguez <alexey@cs.uu.nl>**20070308130257] 
+[Generic map test
+Alexey Rodriguez <alexey@cs.uu.nl>**20070302113358] 
+[Expected for generic reduce
+Alexey Rodriguez <alexey@cs.uu.nl>**20070301142115] 
+[Layout LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20070301141652] 
+[Generic reduce is now even more generic now.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070301140828] 
+[Previously I forgot to add this datatype for the foldTree test.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070222164307] 
+[Added Reduce test for LIGD
+Alexey Rodriguez <alexey@cs.uu.nl>**20070222164239] 
+[FoldTree test
+Alexey Rodriguez <alexey@cs.uu.nl>**20070219103440] 
+[SYB should not print parenthesis around nullary constructors, and generated of .exp with LIGD.
+Alexey Rodriguez <alexey@cs.uu.nl>**20070219103252] 
+[Expected result for equality
+Alexey Rodriguez <alexey@cs.uu.nl>**20070212125322] 
+[Equality tests for different constructors being compared
+Alex Gerdes <alex@gefion.nl>**20070212123335] 
+[README fiel
+Alexey Rodriguez <alexey@cs.uu.nl>**20070208144115] 
+[More files needed for the comparison
+Alexey Rodriguez <alexey@cs.uu.nl>**20070208133144] 
+[Comparison suite for generic libraries
+Alexey Rodriguez <alexey@cs.uu.nl>**20070208132717] 
+[LIGD tests
+sweirich@cis.upenn.edu**20061109154453] 
+[SYB1&2 tests
+sweirich@cis.upenn.edu**20061026184829] 
+[Alternative implementation for SYB3.
+oleg@okmij.org**20061025030117] 
+[Added LIGD and LIGD.examples
+Manuel M T Chakravarty <chak@cse.unsw.edu.au>**20061009184712
+ - LIGD is the code contributed by James Cheney
+ - LIOGD.examples has been posted to the list by Johan Jeuring
+] 
+[Added README
+Manuel M T Chakravarty <chak@cse.unsw.edu.au>**20061009143916] 
+Patch bundle hash:
+5f6aa399c1e0733341e39db87860170c00f53350

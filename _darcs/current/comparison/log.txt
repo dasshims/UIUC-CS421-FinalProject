@@ -1,0 +1,583 @@
+Patches to: alexey@cs.uu.nl
+
+080402: patrikj: More of the Performance benchmark
+
+  SelectIntWTree    
+    Hand;     152; 11
+    Uniplate; 128; 11; 1 -- with good instances
+    SmashA;   284; 11
+    Spine;    288; 11
+    RepLib;   288; 11
+    syb3;     304; 11
+    EMGM;     480; 11
+    LIGD;     496; 11
+    SYB1_2;   712; 11
+    Uniplate; 1700; 11; 11 -- with worst instances
+
+  (Now SYB1_2 also works after replacing the stand-alone deriving with
+  an instance declaration.)
+
+  Time to move on to the next test: GEq (I choose GEq before RmWeights
+  because it is more different with two arguments and may thus show
+  other performance figures).
+
+  GEq
+    Hand;    52; 13;  1
+    LIGD;    52; 13;  1
+    EMGM;    76; 13;  1
+    SmashA; 188; 13;  4
+    PolyP;  400; 13;  8
+    RepLib; 412; 13;  8
+    Spine;  688; 13; 13
+    SYB1_2;2684; 13; 52
+    syb3;  3768; 13; 72
+
+  OK. Next in line is RmWeights
+
+    Hand;       84; 13;  1
+    Spine;     160; 13;  2
+    SmashA;    168; 13;  2
+    LIGD;      296; 13;  4
+    RepLib;    308; 13;  4
+    EMGM;      316; 13;  4
+    Uniplate;  348; 13;  4
+    syb3;      524; 13;  6
+    SYB1_2;   6588; 13; 78
+    Uniplate;17473; 13;206 -- with worst instances
+
+  Strange - sometimes the compiled programs gives no output.
+  ghc gets confused when the top level module is the same but the
+  included modules are changed. Need to remove .o or .hi to force
+  recomp of main (or compile with -fforce-recomp, but that forces the
+  whole recomp. not only the top level module).
+
+  I change to -fforce-recomp to avoid mistakes in the numbers (the
+  compilation is rather quick anyway).
+
+080401: patrikj: More Efficiency testing
+
+  Now it would be easy to add more imports and more tests to
+  TestEfficiency.lhs, but there may be problems when the tests
+  fail. There is already an example of a problem with the PolyP
+  implementation of selectIntWTree: it runs (fast), but produces the
+  wrong result. In the general case the run may fail or even fail to
+  compile. We clearly don't want the time to produce an incorrect
+  results to be compared with the time to produce the right
+  result. And we don't want the efficiency test to fail just because
+  one of the tests fail to run.
+
+  One progmatic solution could be to run TestEfficiency mutliple times
+  after changing the code to run one kind of test at a time. (Not
+  nice.)
+
+  Another solution could be to move the effiency test into the normal
+  feature tests so that they print times in addition to
+  [ok/failed]. (This look very attractive structurally but requires
+  changing the build script (compile with optimization) and changing
+  the code of the feature tests to include large data.)
+
+  Implementing the second option for TestSelectIntWTree
+
+  make newtime # test it
+
+    Hand;      156; 11; 1
+    RepLib;    288; 11; 2
+    SmashA;    288; 11; 2
+    Spine;     288; 11; 2
+    syb3;      312; 11; 2
+    EMGM;      484; 11; 3
+    LIGD;      496; 11; 3
+    Uniplate; 1664; 11; 10
+
+  (Note that SYB1_2 is missing - ghc panic! in compilation.)
+
+080331: patrikj: Back to Efficiency testing
+
+  0: which functions work for most libs.
+  1: what types we need to generate values from
+  2: Identify ways of generating large inputs or many inputs
+  3: write tests
+  4: find good ways to measure test results (timing)
+
+  Starting with 
+  0: which functions work for most libs.
+    8; SelectIntWtree;   WTree Int Int
+    8; RmWeights;        WTree Int Int
+    7; SelectIntPerfect; Perfect Int
+    7; GShow;            Company
+    7; GMapQ1;           [Int]
+    7; GEq;	         BinTree Int
+    7; GEqCompany;       Company (and friends)
+    6; SelectSalary;     Company
+    6; UpdateSalary;     Company
+    6; Nested;           Perfect Int -- should be called GEqNested for symm.
+    6; GMapQ2;           [Company]
+    6; GMap;             [Int], [BinTree Int], [BinTree [Int]]
+    6; GEqGRose;         GRose [] Int
+    5; FullTree;         BinTree Int, [Int]
+    4; GShowExt;         Company
+    4; GEqNGRose;        NGRose [] Int
+    4; CrushRight;       [WTree Int Int]
+
+    Most libs support SelectIntWTree, RmWeights, GEq
+     
+  1: what types we need to generate values from
+    WTree Int Int, BinTree Int
+
+  2: Identify ways of generating large inputs or many inputs
+    We could use fulltree, but that is currently not used for WTree  
+    We can just write "by hand" a generator for WTree (see Common.lhs)
+
+  3: First experiment with new TestEfficiency (for SelectIntWtree)
+
+  Hand;   152; 11
+  SmashA; 284; 11
+  RepLib; 292; 11
+  Spine;  296; 11
+  EMGM;   488; 11
+  LIGD;   520; 11
+  SYB1_2; 708; 11
+
+  SmashA; RepLib; Spine; EMGM; LIGD; SYB1_2;
+     1.9;    1.9;   1.9;  3.2;  3.4;    4.7;  -- time in units of Hand
+       2;      2;     2;    3;    3;      5;  -- rounded to integers
+
+  (The "generics" penalty is at least a factor of two in run-time for
+  this test.)
+
+080331: patrikj
+
+  Nice way to find when something went wrong:
+
+    darcs trackdown "ghc --make -fglasgow-exts  -icomparison -icomparison/Uniplate comparison/TestCrushRight.lhs" 
+
+080331: patrikj
+
+  To run syb3 the syb-with-class library needs to be installed
+
+  I ended up installing ghc-6.8.2, cabal-install, etc. Some notes are
+  in dependencies.txt
+
+080318: patrikj
+
+  Override or extend
+    EMGM   cannot override, only extend
+    SYB1_2 extend is by Data instance, extQ is override (on top level)
+    PolyP  extend is by an instance, no override
+
+080317: patrikj:
+
+  What can be done with the efficiency test? The easiest solution
+  would be to reuse as much code as possible of the other test
+  functions, just applying them to larger inputs (or multiple runs of
+  smaller inputs). I need to check which functions could be used for
+  this purpose. So time for a test overview again (see 080211).
+
+  Overview of test cases as Haskell modules and the functions called:
+    TestCrushRight;       CrushRight.{size,flatten,sum}ListTree
+
+    TestEfficiency;       Efficiency.bigeq
+
+    TestGMapQ2;           FoldTree.gapplySelectCompanies
+    TestSelectIntPerfect: FoldTree.selectIntPerfect
+    TestSelectIntPerfect: FoldTree.selectIntWTree
+    TestSelectSalary:     FoldTree.selectSalary
+
+    TestFullTree;         FullTree.gen{BinTree,List}
+
+    TestGEq;              GEq.equalBTreeInt
+      TestGEqCompany;     GEq.equalCompany
+      TestGEqGRose;       GEq.equalGRoseListInt
+      TestGEqNGRose;      GEq.equalNGRoseListInt
+
+    TestGEqTree;          GEqTree.equalWTree
+
+    TestGLookup;          GLookup.lookupBsn
+
+    TestGMap:             GMap.mapList{,{BTree{,List}}}
+
+    TestGMapQ1;           GShow.gapplyShowList
+    TestGADT;             GShow.gshowExpr --** reuse of GShow
+    TestGShow:            GShow.gshowsCompany
+
+    TestGShowExt:         GShowExt.gshowsCompany
+
+    TestUpdateSalary:     Paradise.increase
+
+    TestRmWeights:        RmWeights.rmWeightsWTree
+
+----------------------------------------------------------------
+  Top level summary of test:
+    17 test cases (implemented by at least 1 lib)
+    7 libraries   (implements at least one case)
+
+    No single test case works for all libs, but three work for 6/7 and
+    six more for 5/7. These are the main candidates for efficiency
+    testing / benchmarking.
+
+    EMGM; 17; SmashA; 14; Spine; 14; LIGD; 13; SYB1_2; 12; PolyP; 4;  Uniplate; 1;
+
+  Overview by test case:
+
+    TestGEq;              6; EMGM; LIGD; PolyP; SYB1_2; SmashA; Spine;
+    TestGEqGRose;         6; EMGM; LIGD; PolyP; SYB1_2; SmashA; Spine;
+    TestRmWeights;        6; EMGM; LIGD;        SYB1_2; SmashA; Spine; Uniplate;
+    TestFullTree;         5; EMGM; LIGD; PolyP;         SmashA; Spine;
+    TestGEqCompany;       5; EMGM; LIGD;        SYB1_2; SmashA; Spine;
+    TestGMap;             5; EMGM; LIGD; PolyP;         SmashA; Spine;
+    TestGMapQ1;           5; EMGM; LIGD;        SYB1_2; SmashA; Spine;
+    TestSelectIntPerfect; 5; EMGM; LIGD;        SYB1_2; SmashA; Spine;
+    TestSelectIntWTree;   5; EMGM; LIGD;        SYB1_2; SmashA; Spine;
+    TestGMapQ2;           4; EMGM;              SYB1_2; SmashA; Spine;
+    TestGShow;            4; EMGM; LIGD;        SYB1_2;         Spine;
+    TestNested;           4; EMGM; LIGD;        SYB1_2; SmashA;
+    TestSelectSalary;     4; EMGM;              SYB1_2; SmashA; Spine;
+    TestUpdateSalary;     4; EMGM;              SYB1_2; SmashA; Spine;
+    TestCrushRight;       3; EMGM; LIGD;                SmashA;
+    TestGEqNGRose;        3; EMGM; LIGD;                        Spine;
+    TestGShowExt;         1; EMGM;
+
+  Overview by library:
+
+    EMGM;     17; TestCrushRight; TestFullTree; TestGEq; TestGEqCompany; TestGEqGRose; TestGEqNGRose; TestGMap; TestGMapQ1; TestGMapQ2; TestGShow; TestGShowExt; TestNested; TestRmWeights; TestSelectIntPerfect; TestSelectIntWTree; TestSelectSalary; TestUpdateSalary;
+    SmashA;   14; TestCrushRight; TestFullTree; TestGEq; TestGEqCompany; TestGEqGRose; TestGMap; TestGMapQ1; TestGMapQ2; TestNested; TestRmWeights; TestSelectIntPerfect; TestSelectIntWTree; TestSelectSalary; TestUpdateSalary;
+    Spine;    14; TestFullTree; TestGEq; TestGEqCompany; TestGEqGRose; TestGEqNGRose; TestGMap; TestGMapQ1; TestGMapQ2; TestGShow; TestRmWeights; TestSelectIntPerfect; TestSelectIntWTree; TestSelectSalary; TestUpdateSalary;
+    LIGD;     13; TestCrushRight; TestFullTree; TestGEq; TestGEqCompany; TestGEqGRose; TestGEqNGRose; TestGMap; TestGMapQ1; TestGShow; TestNested; TestRmWeights; TestSelectIntPerfect; TestSelectIntWTree;
+    SYB1_2;   12; TestGEq; TestGEqCompany; TestGEqGRose; TestGMapQ1; TestGMapQ2; TestGShow; TestNested; TestRmWeights; TestSelectIntPerfect; TestSelectIntWTree; TestSelectSalary; TestUpdateSalary;
+    PolyP;     4; TestFullTree; TestGEq; TestGEqGRose; TestGMap;
+    Uniplate;  1; TestRmWeights;
+    syb3;	     0;
+
+080316: patrikj:
+
+  Efficiency test now compiles for most approaches (results below) but
+  it doesn't feel right to include the results without a more serious
+  set of benchmarks (instead of the current singleton set;-). The
+  current test defines a "full tree" of depth 21 and checks it for
+  equality with itself (without first forcing evaluation of the
+  input). (I have not seriously checked its definition through the
+  different approaches so there may also be slight differences.)
+
+  patrikj@utca:~/src/generics/comparison$ grep \; */time.summary | sed "s+/time.summary:+\; +g" | sort -n -t";" -k 2
+  Hand;    108; 21
+  EMGM;    484; 21
+  RepLib;  640; 21
+  SmashA;  832; 21
+  Spine;  1188; 21
+  NOW;    1212; 21
+  PolyP;  1296; 21
+  LIGD;   4956; 21
+  SYB1_2; 5896; 21
+  (Uniplate can't implement geq, so it is missing here.)
+
+  The uniplate dist. includes a benchmark which would be good to use,
+  but that requires quite some coding for all the approaches. Perhaps
+  it could be used as a base and the subset where we already have
+  defined test functions could be used.
+
+080221: patrikj: adding gfulltree to PolyP
+
+  The definition is rather ad-hoc - we should probably implement fan
+  instead generating _all_ full trees.
+
+080216: patrikj: checking TestRmWeights for all approaches
+
+    TestRmWeights: calls   RmWeights.rmWeightsWTree
+
+  OK: EMGM; SYB1_2; RepLib; Uniplate; 
+  comp.failed: 
+    no file: LIGD, Spine, Smash, PolyP
+
+080216: patrikj: checking UpdateSalary for all approaches
+
+  TestUpdateSalary: calls Paradise.increase
+
+  OK: EMGM; SYB1_2; RepLib; Uniplate; Smash;
+  ad.hoc. not supp.: LIGD; Spine;
+  Company d.t. not supp.: PolyP
+
+080215: patrikj: checking GMap for all approaches
+
+  TestGMap: calls GMap.mapList{,{BTree{,List}}}
+
+  OK: LIGD; EMGM; PolyP;
+  Exec. error: Spine; SYB1_2: Smash; Uniplate; Not supported
+  Comp. error: RepLib; GMap.lhs:37:20: not in scope: rBinTree2
+    -- it looks like Alex is working on it => I leave it alone
+  No dir:  SYB_w_cl -- removed it from test.hs
+
+080215: patrikj: Uniplate for ghc 6.8.1
+
+  uniplate-1.0.1 does not compile with ghc-6.8 so I dug out the
+  patches from Neils darcs repository to update to uniplate-1.1 (see
+  Uniplate/log.txt for details).
+
+080213: patrikj: SelectInt, selectSalary
+
+  (approach/FoldTree.lhs)
+
+  OK: EMGM; LIGD; RepLib; Smash; Spine; SYB1_2;
+  Exec. fail: PolyP; -- OK
+  Comp. fail: Uniplate; -- I don't know why it fails
+  No dir: SYB_w_cl; 
+
+080211: patrikj: GShow[Ext]
+
+  OK: EMGM; RepLib; 
+  Done: LIGD; PolyP; Spine; SYB1_2; Smash; Uniplate; 
+  Will not do: SYB_w_cl; (there is not even a subdirectory!)
+  
+080211: Patrik plan:
+
+  Go through test by test. Avoid those Alexey work on right now:
+    TestNested; TestReduce; TestGEq; TestHigherOrder1;
+  Remaning from the test overview:
+    [ok] TestGShowExt:     GShowExt.gshowsCompany
+    [ok] TestGShow:        GShow.gshowsCompany
+    [ok] TestSelectInt:    FoldTree.selectInt
+    [ok] TestSelectSalary: FoldTree.selectSalary
+    [ok] TestGMap:         GMap.mapList{,{BTree{,List}}}
+    [ok] TestUpdateSalary: Paradise.increase
+    TestRmWeights:    RmWeights.rmWeightsWTree
+  Starting from the top with TestGShow.
+
+080211: Alexey plan:
+
+  The things that will be in flux are:
+
+  * TestNested, this function will be using generic equality instead
+    of reduce, so that libraries that do not support type constructor
+    abstraction can be tested for nested types support.
+
+  * TestReduce, this code will use generic function crushLeft instead
+    of reduce.
+
+  * TestGEq, This will become something like TestGEqCompany, to make
+    explicit that it tests universe extension to the company
+    datatypes.
+
+  * I am planning to rename some tests to make them match the names
+    used in the paper (e.g. TestHigherOrder1 -> TestGMapQ1).
+
+  I will try to do this today so that there are no conflicts with the
+  improvements you plan to make. What can you focus on? While you are
+  going through the tests, you can note inconsistencies, biased tests
+  and also whether some approaches are "cheating". Besides that there
+  is the following todo list:
+
+  * Completion of Spine tests for universe size (Alex is working on
+    this)
+  * Completion of crushRight & gmap tests for Spine.
+  * Scrap your boilerplate, with class (I was working on this until I
+    realized that it does not work with GHC 6.8)
+  * RepLib, higher-orderness tests and think about ad-hoc cases. (I am
+    going to work on this)
+  * Performance
+  * Smash
+  * Uniplate
+  * and of course the paper.
+
+  This week I am planning to finish the description of the scoring
+  rules in the Evaluation section, so that scoring should be clear.
+
+  After that I am going to focus on the remaining todo points.
+
+080204: patrikj: renamings to match paper
+
+  OK: TestFoldTree.lhs should be called TestSelectInt
+  OK: listifyInt should be called selectInt
+  OK: listifySalary  := select Salary
+  OK: rest of lisitfy := select
+  
+080204: patrikj: More Test overview
+
+  TestGEq:          GEq.equalCompany
+  TestGEqBTree:     GEq.equalBTreeInt
+  TestGEqGRose:     GEq.equalGRoseListInt
+  TestGEqNGRose:    GEq.equalNGRoseListInt
+
+  -- should split up GEq into separate imports of modules just for the
+     instance to a concrete type and of the definition itself. (Like
+     EMGM/GShowDef).
+
+  TestGShow:        GShow.gshowsCompany
+  TestGShowExt:     GShowExt.gshowsCompany
+  TestHigherOrder1: GShow.gapplyShowList
+  TestHigherOrder2: GShow.gapplySelectCompanies
+
+  TestFoldTree:     FoldTree.selectInt
+  TestSelectSalary: FoldTree.selectSalary
+
+  TestGMap:         GMap.mapList{,{BTree{,List}}}
+
+  TestNested:       Nested.collectPerfect            
+
+  TestUpdateSalary: Paradise.increase
+
+  TestReduce:       Reduce.sizeListTree etc.
+
+  TestRmWeights:    RmWeights.rmWeightsWTree
+
+
+080204: patrikj: Test overview
+
+  GEqBTree     -- GEq.equalBTreeInt: a simpler variant of GEq
+  GEq          -- GEq.equalCompany: same for Company datatype
+  FoldTree     -- FoldTree.selectInt: simple traversal + type case on base type (Int)
+  SelectSalary -- FoldTree.selectSalary: simple traversal + ad-hoc type case
+  HigherOrder1 -- GShow.gapplyShowList: pass gen. fun. as param.
+  HigherOrder2 -- GShow.gapplySelectCompanies: pass gen. fun. (w. ad-hoc) as param.
+  RmWeights    -- RmWeights.rmWeightsWTree -- Test constructor ad-hoc cases
+  UpdateSalary -- Paradise.increase  (Tests paradise)
+  Reduce       -- Reduce.sizeListTree etc. -- abstraction over type constructors
+  GMap         -- GMap.mapList{,{BTree{,List}}} -- abstr. over type constructors
+  GShow        -- GShow.gshowsCompany
+  GShowExt     -- GShow.gshowsCompany -- *** should be with ext. for lists
+  GEqGRose     -- GEq.equalGRoseListInt  -- tests a bigger universe size
+  GEqNGRose    -- GEq.equalNGRoseListInt -- tests a bigger universe size
+  Nested       -- Nested.collectPerfect  -- tests a bigger universe size
+
+  Many tests just call one imported instance of a generic function on
+    one argument. The imported instance usually has a name ending with
+    the type it is instantiated on. But there are exceptions:
+
+    FoldTree.selectInt indicates a generic function is exported, not
+      just an instance (but it is still only used on one type only).
+
+  More details:
+  * FoldTree
+  ** [ok]: LIGD Spine EMGM SYB1_2 RepLib Smash
+  ** Uniplate [compilation failed] see out/TestFoldTree.Uniplate.compilestats
+  ** PolyP    [execution failed]   : TestFoldTree.lhs: PolyP does not handle the WTree a w datatype
+  ** SYB_w_cl [compilation failed] see out/TestFoldTree.SYB_w_cl.compilestats
+
+  The Uniplate error looks complicated.
+
+071114: patrikj: Testing with ghc 6.8.1
+
+  Starting to test with the new ghc
+
+  Plan "make" seems to work as expected.
+
+  make time had some problems - now fixed
+    (some approaches don't work but the overall structure seems to work)
+
+  "make --keep-going time" now takes a few minutes and provides the
+  following result on my laptop:
+
+  more */time.summary # + editing
+    Hand;   104; 21
+    PolyP;  608; 21
+    RepLib; 648; 21
+    Spine; 2752; 21
+    LIGD;  2972; 21
+    SYB1_2;6124; 21
+
+  The rest fail to compile at present.
+     (EMGM, SYB_w_cl, Smash, NOW, Uniplate)
+
+  Cause: 
+   EMGM:
+     No instance for (GRep FullTree (BinTree Char))
+      arising from a use of `fulltree' at Efficiency.lhs:13:14-2
+   SYB_w_cl: there is no such subdirectory!
+   Smash: Smash/Efficiency.lhs is missing
+   NOW: error messages about "wobbly types" requiring type sig's
+   Uniplate: Uniplate/Efficiency is missing
+
+  alexey@cs.uu.nl
+
+070909: patrikj: Classification
+
+  Using a representation datatype (thus no separate comp.)
+  Yes: NOW    NOW/Now.hs:    data Type ...
+       Spine  Spine/SYB1.hs: data Type ...
+  No:  LIGD   LIGD/LIGD.lhs
+       PolyP
+       RepLib RepLib/RepLib/R.hs: data R a has a general Data case
+       EMGM
+       SYB1_2
+
+070617: patrikj: Current state:
+
+  Efficiency test, should be compiled (with opt -O2)
+  Time:  -- minimum of many runs of the compiled code
+    Hand;    24; 19; O2;    52; 20;   104; 21
+    EMGM;    40; 19; O2;    80; 20;   156; 21
+    PolyP;  160; 19; O2;   328; 20;   652; 21
+    RepLib; 196; 19; O2;   384; 20;   776; 21
+    NOW;                             1608; 21
+    Spine;  412; 19; O2;   824; 20;  1640; 21
+    LIGD;   536; 19; O2;  1068; 20;  2136; 21
+    SYB1_2;1696; 19; O2;  3392; 20;  6792; 21
+
+  What is implemented: {- test with runghc test.hs LIBNAME -}
+
+    Tests: Efficiency GEq GEqGRose GEqTree GShow Paradise FoldTree
+      Reduce GMap Nested
+    libraries = LIGD Spine EMGM SYB1_2 SYB_w_cl RepLib Smash NOW PolyP
+    programs = TestEfficiency TestGEq TestGEqGRose TestGEqTree     \
+           TestGShow TestParadise TestFoldTree TestReduce TestGMap \
+           TestNested
+
+    LIGD:    [ok] all
+    Spine:   [missing] GEqTree, TestNested
+             [execution failed] TestReduce,TestGMap
+             [failed] TestGShow
+             [ok] TestGEq, TEstGEqGRose, TestParadise, TestFoldTree
+    EMGM:    [ok] all
+    SYB1_2:  [missing] GEqTree, Nested
+             [execution failed] GMap
+             [failed] Reduce
+             [ok] Efficiency, GEq, GEqGRose, GShow, Paradise, FoldTree
+    SYB_w_cl:[missing] all
+    RepLib:  [missing] GEqTree, Nested
+             [execution failed] GEqGRose,
+             [failed] Reduce
+             [ok with warnings] GMap, GEq, Paradise, FoldTree
+             [ok] Efficiency, Reduce
+    Smash:   [missing] Efficiency, GEq (GEqGRose), GEqTree, Reduce, GMap, Nested
+             [execution failed] GShow, Paradise
+             [ok] FoldTree
+    NOW:     [missing] Efficiency, GEqTree, Reduce, GMap, Nested
+             [failed] GShow, Paradise
+             [ok] GEq, GEqGRose, FoldTree
+    PolyP:   [missing]
+             [execution failed] GEq, GShow, Paradise, FoldTree, Reduce, Nested
+             [failed] GEqTree
+             [ok] Efficiency, GEqGRose, GMap
+
+  Sending the patches to oleg@pobox.com
+
+070615: patrikj: dependencies in GM
+
+  Overview:
+    TestGEq.lhs           import GEq         GMsec2, CompanyReps
+    TestGEqGRose.lhs      import GEq         GMsec2, CompanyReps
+    TestGShow.lhs         import GShow       GMsec2, CompanyReps
+    TestParadise.lhs      import Paradise    GMsec2, CompanyReps
+    TestFoldTree.lhs      import FoldTree    GMsec2, CompanyReps, TreeReps
+    TestReduce.lhs        import Reduce      GM, BinTreeReps
+    TestGMap.lhs          import GMap        GM, BinTreeReps, TreeReps
+    TestGEqTree.lhs       import GEqTree     - GEq, TreeReps, GMsec2
+    TestNested.lhs        import Nested      - PerfectReps
+
+  Renamed GM to GMsec3 for clarity.
+
+
+070807: alex: State:
+
+  What is missing: 
+
+    LIGD:    	-
+    Spine:		GEqNGRose, GEqTree, GShow, Reduce, GMap
+    EMGM:     	GEqNGRose, Reduce, GMap, Nested
+    SYB1_2: 	GEqNGRose, GEqTree, Reduce, GMap
+    SYB_w_cl: 	all
+    RepLib:  	GEqGRose, GEqNGrose, Reduce, Nested
+    Smash:   	GEq, GEqGRose, GEqNGRose, GShow, Paradise, GEqTree, Reduce, GMap, Nested
+    NOW:     	GEqNGRose
+    PolyP:   	GEq, GEqNGRose, GEqTree, GShow, Paradise, FoldTree, FoldTreeSalary, Reduce, Nested
+    Uniplate:	GEq, GEqGRose, GEqNGRose, GEqTree, GShow, GMap
+    YAGS:	     	all
+

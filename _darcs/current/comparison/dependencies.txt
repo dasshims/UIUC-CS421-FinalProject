@@ -1,0 +1,33 @@
+080330: patrikj: Some dependency chasing
+
+  502  wget http://hackage.haskell.org/packages/archive/HTTP/3001.0.4/HTTP-3001.0.4.tar.gz
+  503  tar -zxf HTTP-3001.0.4.tar.gz 
+  504  cd HTTP-3001.0.4/
+  505  runghc Setup.lhs configure
+  506  runghc Setup.lhs build
+  507  sudo runghc Setup.lhs install
+
+----
+
+  502  wget http://hackage.haskell.org/packages/archive/zlib/0.4.0.4/zlib-0.4.0.4.tar.gz
+  503  tar -zxf zlib-0.4.0.4.tar.gz 
+  504  cd zlib-0.4.0.4/
+  505  runghc Setup.hs configure
+  506  runghc Setup.hs build
+  507  sudo runghc Setup.hs install
+ 
+----
+
+  504  wget http://hackage.haskell.org/packages/archive/cabal-install/0.4.0/cabal-install-0.4.0.tar.gz
+  505  tar -zxf cabal-install-0.4.0.tar.gz 
+  506  cd cabal-install-0.4.0/
+  507  ls
+  508  more README 
+  509  ls
+  510  runghc Setup.lhs configure
+  511  runghc Setup.lhs build
+  512  sudo runghc Setup.lhs install
+
+----
+
+sudo cabal --global install syb-with-class
