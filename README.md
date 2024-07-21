@@ -42,7 +42,7 @@ runghc test.hs --all
 
 Example to generate expected for TestSelectSalary:
 ```bash
-runghc test --expected LIGD TestSelectSalary
+runghc -package process test.hs --expected LIGD TestSelectSalary
 ```
 
 ## Initial Setup

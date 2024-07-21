@@ -1,14 +1,17 @@
 -- Script to test the generic benchmarks
+--{-# OPTIONS_GHC -package process #-}
 
 import Prelude hiding (exp)
---import System
-import System.Environment
-import System.Environment
+import System
+--import System.Environment
+--import System.IO
+--import System.Exit
+--import System.Process (system)
 import Data.List
 import Text.Regex
 import Control.Monad
 
-libraries = ["LIGD"] --`,"Spine","EMGM","SYB1_2","RepLib","SmashA","PolyP","Uniplate","syb3","multirec"]
+libraries = ["LIGD","Spine","EMGM","SYB1_2","RepLib","SmashA","PolyP","Uniplate","syb3","multirec"]
 
 programs = [
             "TestGEq"                  -- Tests Separate compilation and multiple arguments
@@ -73,7 +76,7 @@ getErrorReport names program = do
 runtest :: (String -> String) -> String -> String -> IO ()
 runtest out lib program = do
   putStr ("Testing "++program++"; "++lib++"; ")
-  run (ghc [srcdir lib,lhs program] 
+  run (ghc [srcdir lib,lhs program]
        `redir` out program
        `redir2` compilestats program lib
       )
@@ -90,10 +93,10 @@ runtest out lib program = do
                       ls  -> " [execution failed] \n" ++ unlines (map ("  "++) errors)
       )
       $ do
-  run (diff [exp program,out program])
-      (\_ -> putStrLn " [failed]")
-      $ do
-  putStrLn " [ok]"
+      run (diff [exp program,out program])
+          (\_ -> putStrLn " [failed]")
+          $ do
+          putStrLn " [ok]"
 
 runlib out progs lib = do
   mapM_ (runtest (out . libit lib) lib) progs
@@ -111,7 +114,7 @@ genOneExpected lib program = do
     run (ghc [srcdir lib,lhs program] `redir` exp program)
         (\_ -> putStrLn " compilation failed")
         (putStrLn "[ok]")
-  
+
 
 -- Generated expected files using LIGD
 makeExpected = genExpected programs "LIGD"
@@ -123,6 +126,7 @@ expected = "--expected"
 
 options = [expected]
 
+main :: IO ()
 main = do
   args <- getArgs
   let
@@ -148,7 +152,7 @@ main = do
     -- Example to generate expected for TestSelectSalary:
     --
     --   runghc test --expected LIGD TestSelectSalary
-    
+
     -- replace this by proper option handling lib. like opt
     rest_opts = (((args \\ options) \\ libraries) \\ programs) \\ [allOpt]
 
