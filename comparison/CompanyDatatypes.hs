@@ -1,4 +1,10 @@
-{-# OPTIONS_GHC -fglasgow-exts -fgenerics #-}
+--{-# OPTIONS_GHC -fglasgow-exts -fgenerics #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE DeriveGeneric #-}
+
 
 -- The organisational structure of a company
 

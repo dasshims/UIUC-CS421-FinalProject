@@ -1,6 +1,9 @@
 all:
 	runghc test.hs --all | tee results.txt
 
+ligd:
+	runghc -package process test.hs --expected LIGD TestSelectSalary | tee results.txt
+
 clean:
 	-rm -f out/*.out
 	-rm -f out/*.compilestats

@@ -1,12 +1,11 @@
 -- Script to test the generic benchmarks
---{-# OPTIONS_GHC -package process #-}
 
 import Prelude hiding (exp)
-import System
---import System.Environment
---import System.IO
---import System.Exit
---import System.Process (system)
+--import System
+import System.Environment
+import System.IO
+import System.Exit
+import System.Process (system)
 import Data.List
 import Text.Regex
 import Control.Monad
@@ -126,24 +125,24 @@ expected = "--expected"
 
 options = [expected]
 
-main :: IO ()
 main = do
   args <- getArgs
+  let args' = if null args then ["--expected", "LIGD", "TestSelectSalary"] else args
   let
     -- Give this flag to generate .exp
-    wantExpected = any (expected==) args
+    wantExpected = any (expected==) args'
     driver | wantExpected = genExpected
            | otherwise    = runsuite
 
     -- Run tests on all libraries and tests
     allOpt = "--all"
-    doAll = allOpt `elem` args
+    doAll = allOpt `elem` args'
 
     -- Which libs and tests?
     -- default given in "libraries" and "programs"
     elem2 x xs = x `elem` xs && not doAll
-    libs' = filter (`elem2` libraries) args `orElse` libraries
-    progs = filter (`elem2` programs ) args `orElse` programs
+    libs' = filter (`elem2` libraries) args' `orElse` libraries
+    progs = filter (`elem2` programs ) args' `orElse` programs
 
     -- We can only use one lib when generating .exp
     libs | wantExpected = take 1 libs'
@@ -154,7 +153,7 @@ main = do
     --   runghc test --expected LIGD TestSelectSalary
 
     -- replace this by proper option handling lib. like opt
-    rest_opts = (((args \\ options) \\ libraries) \\ programs) \\ [allOpt]
+    rest_opts = (((args' \\ options) \\ libraries) \\ programs) \\ [allOpt]
 
     prInstructions = putStrLn (unlines
                      ["usage: "
@@ -165,6 +164,7 @@ main = do
                      ,"    TESTS        Is any of: " ++ concat (intersperse " " programs)
                      ])
 
-  if null args then prInstructions else
+  if null args' then prInstructions else
     if null rest_opts then mapM_ (driver progs) libs
       else putStrLn ("* Unknown options : " ++ show rest_opts) >> prInstructions
+

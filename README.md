@@ -51,3 +51,10 @@ For Initial setup you might need to install few libraries in your system, it wil
 cabal install regex-compat
 cabal install --lib regex-compat
 ```
+
+:set -package process
+:set -package syb
+:l test.hs 
+
+
+### Presentation
